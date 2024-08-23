@@ -1,0 +1,45 @@
+{
+  "name": "capacitor-app",
+  "version": "1.0.0",
+  "description": "An Amazing Capacitor App",
+  "main": "index.js",
+  "keywords": [
+    "capacitor",
+    "mobile"
+  ],
+  "scripts": {
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@capacitor-community/admob": "^6.0.0",
+    "@capacitor-community/privacy-screen": "^5.1.1",
+    "@capacitor-community/sqlite": "^6.0.1",
+    "@capacitor/android": "^6.1.1",
+    "@capacitor/camera": "latest",
+    "@capacitor/core": "latest",
+    "@capacitor/device": "^6.0.0",
+    "@capacitor/dialog": "^6.0.0",
+    "@capacitor/filesystem": "^6.0.0",
+    "@capacitor/network": "^6.0.1",
+    "@capacitor/share": "^6.0.1",
+    "@capacitor/splash-screen": "latest",
+    "@capacitor/status-bar": "^6.0.1",
+    "@capacitor/toast": "^6.0.1",
+    "@capgo/capacitor-data-storage-sqlite": "^6.0.4",
+    "@ionic/pwa-elements": "^3.3.0",
+    "dom-to-image": "^2.6.0",
+    "html-to-image": "^1.11.11",
+    "html2canvas": "^1.4.1",
+    "jeep-sqlite": "^2.8.0",
+    "pdfmake": "^0.2.12"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "latest",
+    "vite": "^2.9.13",
+    "webpack-cli": "^5.1.4"
+  },
+  "author": "",
+  "license": "ISC"
+}

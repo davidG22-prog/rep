@@ -1,0 +1,22 @@
+{
+  "appId": "com.ng.replog.afem",
+  "appName": "Rep Log",
+  "webDir": "www",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    },
+    "PrivacyScreen": {
+      "enable": true,
+      "imageName": "Splashscreen",
+      "contentMode": "scaleAspectFit"
+    },
+    "capacitor-data-storage-sqlite": {
+      "appName": "Rep Log",
+      "databaseName": "rep_log_DB",
+      "tableNames": [],
+      "androidDatabaseLocation": "default",
+      "androidEncryption": false
+    }
+  }
+}
