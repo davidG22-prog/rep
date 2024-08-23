@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkcapacitor_app=self.webpackChunkcapacitor_app||[]).push([[600],{600:(e,a,n)=>{n.r(a),n.d(a,{PrivacyScreenWeb:()=>p});var t=n(546);class p extends t.E_{async enable(){throw this.unimplemented("Not implemented on web.")}async disable(){throw this.unimplemented("Not implemented on web.")}}}}]);
