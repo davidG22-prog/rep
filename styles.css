@@ -43,7 +43,7 @@ body {
     padding: 0.2rem; width: 100%; max-width: 480px;
 }
 input{
-    border: 1px solid #e9e8e8;
+  border: 1px solid #dfdfdf;
     padding: 0.5rem 1rem; font-family: "Montserrat";
 }
 select{
@@ -183,8 +183,7 @@ select{
         margin: 5px;  position: relative;
         background: inherit; 
         display: flex; justify-content: space-between;
-        align-items: center; white-space: nowrap; 
-        text-overflow: ellipsis;
+        align-items: center; white-space: nowrap;  
     }
     .mobile-footer{
         font-size: 16px;
@@ -753,8 +752,9 @@ table.analysisTable {
     position: absolute; background-color: #fff; text-align: left;
     border-radius: 5px; z-index: 99; font-size: small;
     box-shadow: rgba(0, 0, 0, 0.25) 0px 0px 8px;
-    padding: 0px; width: calc(100% - 2rem);
+    padding: 0px; width: calc(100% - 2rem); max-height: 30vh; overflow: auto;
   }
+
 .flat{
   display: flex; justify-content: space-between;
 }
@@ -769,4 +769,26 @@ table.analysisTable {
   height: 100%;
   object-fit: contain; /* Maintain aspect ratio while fitting */
   touch-action: pan-x pan-y; /* Allow panning on touch devices */
+}
+.title-top{
+  box-shadow: 0px 0px 2px #c9c9c9; border-radius: 5px; display: grid; grid-template-columns: 2fr 8fr 2fr;
+   column-gap: 10px; justify-items: center; align-items: center; 
+   margin: 1rem auto; margin-top: calc(1rem - 10px); background-color: #fff;
+}
+.popBox{
+  font-size: larger; font-weight: bold; 
+  text-align: center; margin: 1.5rem 0.5rem 0.5rem; padding: 1rem;
+  background: white; border-radius: 0.5rem; height: inherit;
+  max-height: 80vh; overflow: auto;
+}
+.requestImages{
+  width: 100%;
+  text-align: center;
+  margin: 3px auto;
+}
+#picBox{
+  height: 30vh;
+  overflow: auto;
+  margin-bottom: 0.5rem;
+  border-radius: 1rem;
 }

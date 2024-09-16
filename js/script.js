@@ -14,7 +14,44 @@ let priceList = ''; let checkStat = ''; let priceLabel = 'official pricelist';
 const home =()=>{
     window.location.reload();
 }
- 
+
+function generateSession() {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1; // JavaScript months are 0-indexed
+
+  // If the current month is March through December (3-12)
+  if (currentMonth >= 3 && currentMonth <= 12) {
+    return `${currentYear}/${currentYear + 1}`;
+  } else {
+    // Otherwise (January or February)
+    return `${currentYear - 1}/${currentYear}`;
+  }
+}
+
+// Example usage:
+const currentSession = generateSession();
+console.log(currentSession); // Output will depend on the current month
+
+
+// Select all input elements with type="date"
+const dateInputs = document.querySelectorAll('input[type="date"]');
+
+// Function to format the date as MM/DD/YYYY
+function formatDatePlaceholder(date) {
+  const month = ('0' + (date.getMonth() + 1)).slice(-2); 
+  const day = ('0' + date.getDate()).slice(-2);
+  const year = date.getFullYear();
+  return `${month}/${day}/${year}`;
+}
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    // Loop through each date input and set the placeholder
+    dateInputs.forEach(input => {
+        input.placeholder = formatDatePlaceholder(new Date());
+    });
+});
+
 function addCommasToNumber(num) {
   // Convert the number to a string and split it into an array of digits
   const numArr = num.toString().split('');
@@ -721,7 +758,6 @@ const toRequestCart = (t, q, p, s, id) =>{
          
 }
 
-
 const pickBook = (id, sch) => {
 
     let pop_up = document.querySelector('.pop-content');
@@ -832,120 +868,8 @@ const more = () => {
     `;
     pop_up.parentElement.style.display = oldPop.style.display === 'none' ? 'block' : 'none';  
 
-    }
-
-const getSentOrderList = () =>{
-    const savedOrders = Object.keys(localStorage);
-    // Loop through each key and log the key-value pair
-        
-    if(savedOrders.length  !== 0){
-
-        let invoice_table = document.createElement('table');
-        invoice_table.style.cssText = `box-shadow: 0px 0px 3px #6d6d6d;`;
-        let tBody = document.createElement('tbody');
-        let tHead = document.createElement('tr');
-        tHead.innerHTML = `
-            <th>order ref</th> <th>Date</th> <th>status</th>  
-        `;
-        tBody.appendChild(tHead);
-        savedOrders.forEach(key => {
-            let row = document.createElement('tr');
-            row.innerHTML = `<td style="font-weight: bold">${key}</td> <td>${hexToDate(key)}</td><td>supplied</td>`;
-            row.onclick = ()=>{order(key)};
-            tBody.appendChild(row);
-        });
-        invoice_table.appendChild(tBody);
-        let tFoot = document.createElement('div');
-        //tFoot.classList.add('btm_nav_box');
-        tFoot.innerHTML = `
-            <div class="invoice-container">
-            <div class="bi bi-envelope-paper invoice-icon">
-                <div>Order</div>
-            </div>
-                                
-            <div class="span">
-                <div>session: 2023/2024</div> 
-            </div>
-            </div>
-
-            <div class="record-container">
-            <div class="list">
-                Order Record <span><select class="select-option"><option>select session...</option><option>2023/2024</option><select></span>
-            </div>
-            </div>
-
-        `;
-        appBody.innerHTML = ''; //clear content body
-        appBody.appendChild(tFoot);
-        appBody.appendChild(invoice_table);
-        
-
-    }else{
-        appBody.innerHTML = '';
-        appBody.innerHTML = `
-        <div style="text-align: center; ">
-            <div class="title_box" style="background-color: #fff;">
-                <div class="bi bi-cart4" style="padding: 5px 1rem; font-size: 2.2rem;"></div>
-                <div class="span" style="margin-left: -3rem; font-size: x-large; font-weight: 300;"> shopping cart</div>
-            </div>
-            <img src="figures/undraw_Diary_re_4jpc.png" width="100%" />
-        
-            <div style="text-transform: none;">youare yet to place any order, click on the botton below to start.</div>
-                
-                <div class="list cancle-btn nxt-btn" style="margin: 1rem auto; width: 50%;" onclick="window.location.assign('index.html')">
-                        start shopping <div class="bi bi-cart-check-fill"></div>
-                </div> 
-        </div>
-    `; 
-    }
 }
-
-const getSuppliedOrderList = () =>{
-    const savedOrders = Object.keys(localStorage);
-    // Loop through each key and log the key-value pair
-        
-    let pop_up = document.querySelector('.pop-content');
-    if(savedOrders.length  !== 0){
-        pop_up.innerHTML = `        <div style="text-align: center;">
-        <div style="text-align: center; ">
-        <div style="margin: 1rem auto; text-align: center;">
-        <h1 style="font-weight: 300;">Invoice LIst</h1>
-        </div>
-    `;
-        savedOrders.forEach(key => {
-             
-            let div = document.createElement('div');
-            div.classList.add('list');
-            div.style.backgroundColor = "white";
-            div.onclick = ()=>{order(key)};
-            div.innerHTML = `<div style="font-size:small;"> <span style="margin-left: 10px ;">${hexToDate(key)}</span>: </div> <div><span style="text-align:right; font-size:small"><b>Ref id: ${key}</b></span></div>`;
-            pop_up.appendChild(div);
-
-        });
-    }else{          
-        
-        let div = document.createElement('div'); 
-        div.style.cssText = "background:white; padding:1rem 1rem 3rem; text-align: center;"; 
-        div.innerHTML = `
-        <div style="text-align: center;">
-        <div style="text-align: center; ">
-        <div style="margin: 1rem auto; text-align: center;">
-        <h1 style="font-weight: 300;">Invoice</h1>
-        </div>
-
-        <div style="width: 70%; margin: 1rem auto; text-align: center; text-transform: none; font-size: smaller;">
-        You have not sent an order yet, click on the button below to add items to your cart.</div>
  
-        <div class="grey-btn nxt-btn" style="width: 50%; font-size: smaller;" onclick="cart()"> shopping cart </div> 
-        `;
-        pop_up.appendChild(div);
-
-    }
-
-    pop_up.parentElement.style.display = oldPop.style.display === 'none' ? 'block' : 'none';  
-
-}
-
 const pwdUpdate = () =>{
 
     let pop_up = document.querySelector('.pop-content');
@@ -1313,10 +1237,10 @@ checkboxes.forEach(checkbox => {
 });
 
 const showPrice = () => {
-    appBody.innerHTML = '';
-    if(oldPop){
+  appBody.innerHTML = '';
+  if(oldPop){
         oldPop.style.display = 'none'; oldPop.innerHtml = '';
-    }
+  }
   let priceBox = document.createElement('div');
 
   priceList.forEach(category => {
@@ -1359,36 +1283,91 @@ const showPrice = () => {
   console.log(priceTable);
   });
 
+    // Clear the content body
+    appBody.innerHTML = '';
+
+    // Add the header section
+    appBody.innerHTML = `
+    <div class="title-top">
+        <div class="bi bi-newspaper" style="padding: 5px 1rem; font-size: 2.2rem;"></div>
+        <div class="span" style="font-size: large; font-weight: 300; text-align: center;">
+        <div>2024 price list</div>
+        <div><span style="font-size: small;">effective from May 1st, 2024</span></div>
+        </div>
+        <div onclick="cusPrice()" class="bi bi-tools" style="padding: 5px 1rem; font-size: 1.3rem;"></div>
+    </div>
+    `;
+appBody.appendChild(priceBox); 
+};
+
+const cusPrice = () => {
+    appBody.innerHTML = '';
+    if(oldPop){
+        oldPop.style.display = 'none'; oldPop.innerHtml = '';
+    }
+  let priceBox = document.createElement('div');
+
+  priceList.forEach(category => {
+  const categoryName = Object.keys(category)[0];
+  const books = category[categoryName]; 
+  // Create the price table
+  const priceTable = document.createElement('table');
+ 
+  (categoryName === 'nursery') ? priceTable.style.display = 'table' : priceTable.style.display = '';
+  const tableHead = document.createElement('thead');
+  const headerRow = document.createElement('tr'); 
+  const titleHeader = document.createElement('th');
+  const priceHeader = document.createElement('th'); 
+  titleHeader.textContent = `${categoryName} books`;
+  priceHeader.textContent = 'Price(₦)'; 
+  headerRow.appendChild(titleHeader);
+  headerRow.appendChild(priceHeader);
+  tableHead.appendChild(headerRow);
+  tableHead.style.position = 'sticky';
+  tableHead.style.top = 0;
+  priceTable.appendChild(tableHead);
+  
+  const tableBody = document.createElement('tbody');
+
+  // Add rows for each book
+  books.forEach(book => {
+      const row = document.createElement('tr');
+      const titleCell = document.createElement('td');
+      titleCell.style.textAlign = 'left';
+      const priceCell = document.createElement('td');
+      priceCell.style.backgroundColor = `white`;
+      priceCell.style.textAlign = `center`;
+      priceCell.setAttribute('contentEditable', true);
+      priceCell.classList.add('qnt-text');
+      titleCell.textContent = book.name.toLowerCase();
+      priceCell.textContent = `${book.price}`;
+      row.appendChild(titleCell);
+      row.appendChild(priceCell);
+      tableBody.appendChild(row);
+  });
+
+  priceTable.appendChild(tableBody);
+  priceBox.appendChild(priceTable);
+  console.log(priceTable);
+  });
+
 // Clear the content body
 appBody.innerHTML = '';
 
 // Add the header section
 appBody.innerHTML = `
-  <div style="box-shadow: 0px 0px 2px #c9c9c9; border-radius: 5px; display: grid; grid-template-columns: 2fr 10fr; column-gap: 10px; justify-items: center; align-items: center; margin: 1rem auto; margin-top: calc(1rem - 10px); width: 80%; background-color: #fff;">
+  <div class="title-top">
     <div class="bi bi-newspaper" style="padding: 5px 1rem; font-size: 2.2rem; margin-right: -1rem;"></div>
     <div class="span" style="font-size: large; font-weight: 300; text-align: center;">
-      <div>2024 price list</div>
-      <div><span style="font-size: small;">effective from May 1st, 2024</span></div>
+      <div>custom price</div>
+      <div><span style="font-size: small;"> </span></div>
     </div>
+    <div onclick="showPrice()" class="bi bi-award-fill" style="padding: 5px 1rem; font-size: 1.3rem;"></div>
   </div>
 `;
-
-// Create the footer section
-const footerTable = document.createElement('table');
-footerTable.style.display = 'table';
-const footerBody = document.createElement('tbody');
-const footerRow = document.createElement('tr');
-footerRow.innerHTML = `
-  <td onclick="add_invoice()" style="text-align: center;"><i class="bi bi-cart4"></i> new cart</td>
-  <td onclick="window.location.assign('index.html')" style="text-align: center;"><i class="bi bi-stack"></i> see books</td>
-`;
-footerBody.appendChild(footerRow);
-footerTable.appendChild(footerBody);
-appBody.appendChild(priceBox);
-appBody.appendChild(footerTable);
+appBody.appendChild(priceBox); 
 };
 
- 
 const clearCart = () =>{
     const cartL = document.querySelector('.listNum');
         cartItemsAry = [];
@@ -1426,8 +1405,6 @@ const delBk = (indexToRemove) => {
       console.log(`Book not found in cart: ${bookToRemove.title}`);
     }
 }
-
-
 
 const cart = async ()=>{
     showingCart = true;
@@ -1644,217 +1621,6 @@ const errorInput = (tag) => {
     myDiv.style.animation = 'insertShadowGlow 2s';
 }
        
-const verifyInvoice = async(ref) =>{
-
-    // Retrieve the array from local storage 
-    const storedOrder = await getAnInvoice(ref);
-     
-    let myOrder = [];
-
-    if (storedOrder) {
-        myOrder = JSON.parse(storedOrder); 
-    } else {
-        myOrder = [];
-    }
-
-    if (typeof myOrder === 'object' && myOrder !== null){
-    
-        cost = 0;
-        
-        let cart_table = document.createElement('table');
-        cart_table.style.marginBottom = '0.5rem';
-        cart_table.id = 'orderTable';
-        let tBody = document.createElement('tbody');
-        let tHead = document.createElement('tr');
-        tHead.innerHTML = `
-            <th>Book title </th> <th>price</th> <th >qty</th> <th>cost</th> 
-        `;
-        tBody.appendChild(tHead);
-        //console.log(myOrder);
-        myOrder.collections.forEach(item => {
-            let prize = getPrice(item.bk_sch, Number(item.b_id));
-            let row = document.createElement('tr');
-            row.innerHTML = `<td style="text-align:left; display: flex; justify-content: space-between;">${item.book} <input class="invoiceCheck" type="checkbox" /></td> 
-                            <td>₦${addCommasToNumber(prize)}</td> 
-                            <td >${item.qnt}</td> 
-                            <td >₦<b>${addCommasToNumber(prize * item.qnt)}</b></td>
-                            `;
-            tBody.appendChild(row);
-            cost += prize * item.qnt;
-        });
-      
-        cart_table.appendChild(tBody);
-        appBody.appendChild(cart_table);
-
-        let sum_table = document.createElement('table');
-        sum_table.id = 'sales_info';
-        sum_table.style.display = 'none';
-        sum_table.style.marginBottom = '0.5rem';
-        let sumBody = document.createElement('tbody'); 
-        sumBody.innerHTML = `
-            <tr><td><b>cost of books:</b></td><td id="bkCost">₦${addCommasToNumber(cost)}</td></tr>
-            <tr>
-                <td><b>discount</b></td>
-                <td style="align-items: center;
-                    display: grid;
-                    grid-template-columns: 4fr 1fr;
-                    gap: 15px;">
-                    <input min="0" max="15" id="discount" type="range" /><span id="discountVal"></span>  
-                </td>
-            </tr>
-            <tr>
-                <td><b>payment:</b></td>
-                <td>
-                    <input id="payDay" type="date" value="" />
-                </td>
-            </tr>
-            <tr><td><b>receiver:</b></td>
-                <td>
-                    <input id="receiver" type="text" value="" placeholder="receiver name..." />
-                </td>
-            </tr>
-            <tr><td><b>contact:</b></td>
-                <td>
-                    <input id="receiver_phone" name="shipping" type="number" value="" placeholder="receiver phone..." /> 
-                </td>
-            </tr>
-        `; 
-        sum_table.appendChild(sumBody);
-        
-        let tFoot = document.createElement('div');
-        tFoot.classList.add('btm_nav_box');
-        tFoot.style.width = '100%';
-        tFoot.innerHTML = `
-            <div class="list cancle-btn invc_btn bi bi-trash3-fill" id="${ref}" style="width: fit-content; display: block;" ></div>
-            <div class="list cancle-btn nxt-btn" style="width: fit-content; display: block" onclick="editDraft('${ref}')">
-                <div style="font-size: x-large; color:black; font-weight: bolder;" class="bi bi-highlighter"></div> 
-            </div>
-            <div class="list proceed-btn nxt-btn" style="background-color:yellow; width: fit-content;" id="checkout" onclick="completeInvoiceVerification('${ref}')"> 
-                verify invoice <div style="font-size: large; font-weight: bolder; margin-left: 1rem" class="bi bi-patch-check-fill"></div>
-            </div>
-        `;
-        appBody.innerHTML = ''; //clear content body
-        appBody.innerHTML = `   
-            <div style="box-shadow: 0px 0px 2px #c9c9c9; border-radius: 5px; display: grid; grid-template-columns: 2fr 10fr; column-gap: 10px;
-                justify-items: center; align-items: center; margin: 1rem auto; margin-top: calc(1rem - 10px); width: 80%; background-color: #fff;">
-
-                <div class="bi bi-basket2" style="padding: 5px 1rem; font-size: 2.2rem; margin-right: -1rem; "></div>
-                <div class="span" style="margin-left: -3rem; font-size: x-large; font-weight: 300;">Verify Invoice</div>
-            </div>
-            <div style=" text-transform:none; background: #f0f0f0; box-shadow: 0px 0px 3px #6d6d6d; margin: 10px auto;">
-                <div class="invoiceTab"><small class="fb-ar">School Name: </small>      <small style="text-align: left">${myOrder.school}</small></div>
-                <div class="invoiceTab"><small class="fb-ar">Address: </small>      <small style="text-align: left">${myOrder.address}</small></div>
-                <div class="invoiceTab"><small class="fb-ar">Date: </small>      <small style="text-align: left">${myOrder.date}</small></div>
-            </div>
-        `;
-        appBody.appendChild(cart_table);
-        appBody.appendChild(sum_table); 
-        appBody.appendChild(tFoot);
-    }
-     
-    let discountRange = document.getElementById('discount');
-    let costBlock = document.getElementById('bkCost');
-    const payDay = document.getElementById('payDay');
-    
-    // Get the element to show/hide
-    const elementX = document.getElementById('sales_info');
-    const verifyBtn =  document.getElementById('checkout');
-
-    const receiver = document.getElementById('receiver');
-    const receiver_phone = document.getElementById('receiver_phone');
-     
-    // Function to check if inputs are filled and show/hide element z
-    function checkInputs() {
-        if (payDay.value !== '' && receiver.value !== '' && receiver_phone.value !== '') {
-            verifyBtn.style.display = ''; // Show element z
-        } else {
-            verifyBtn.style.display = 'none'; // Hide element z
-        }
-    }
-
-    // Add event listeners to inputs to trigger the check on change
-    payDay.addEventListener('change', checkInputs);
-    receiver.addEventListener('change', checkInputs);
-    receiver_phone.addEventListener('change', checkInputs);
-
-    // Initial check on page load
-    checkInputs(); 
-
-    disVal = document.getElementById('discountVal');
-
-    if(disVal){
-        disVal.innerHTML = discountRange.value + '%';
-
-        discountRange.oninput = () =>{
-        disVal.innerHTML = discountRange.value+'%';
-        let disCal = cost * (discountRange.value / 100);
-        costBlock.innerHTML = `₦${addCommasToNumber(cost - disCal)} <small style="float:right;">discount of: <b>₦${addCommasToNumber(disCal.toFixed())} </b></small>`;
-        };  
-    }
-
-    // Get all checkboxes
-    const checkboxes = document.querySelectorAll('.invoiceCheck'); 
-
-    // Add a change event listener to each checkbox
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', () => {
-            checkbox.parentNode.style.backgroundColor = checkbox.checked ? 'aqua' : '';
-        });
-    });
-
-    // Function to check if all checkboxes are checked
-    function areAllChecked() {
-        return Array.from(checkboxes).every(checkbox => checkbox.checked);
-    }
-
-    // Add event listener to each checkbox
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', () => {
-            // Show/hide elementX based on the checkbox states
-            elementX.style.display = areAllChecked() ? 'table' : 'none';
-        });
-    });
-
-    if(elementX && verifyBtn){
-        // Initial check on page load
-        elementX.style.display = areAllChecked() ? 'table' : 'none'; 
-    }
-
-           
-}
-
-const placeOrder = () =>{
-    const currentDate = new Date(); 
-    const date = new Date(`${supplyTime}`);//create date object
-    let discountRate = salesDiscount / (salesDiscount + actualPayment);
-    console.log(discountRate);
-    let orderObj = {}; 
-    salesDiscount = salesDiscount === 'no discount for sales below ₦50,000' ? ' (no discount)' : ` (discounted ₦${addCommasToNumber(salesDiscount)})`;
-    orderObj.orderId = 'order reference code: '+dateToHex(currentDate); 
-    orderObj.shipping = 'shipping preference: '+supplyChoice;
-    orderObj.shipDate = 'shipping date: '+formatDate(date);
-    orderObj.payment = 'payment due date: '+paymentType;
-    orderObj.rate = discountRate; 
-    orderObj.payable = `total payable: ₦`+ addCommasToNumber(actualPayment) +' '+salesDiscount ;
-    orderObj.orderList = cartItemsAry; 
-    localStorage.setItem(dateToHex(currentDate), JSON.stringify(orderObj));
-
-    appBody.innerHTML = ''; 
-    cartItemsAry = [];
-        
-    appBody.innerHTML = `
-    <div style="margin: 10px auto; text-align: center;">
-    <h1 style="font-weight: 300;">Order Completed!</h1>
-    <img src="figures/undraw_Message_sent_re_q2kl.png" width="100%" />
-    
-    <div style="width: 70%; margin: 1rem auto; text-align: center; text-transform: none; font-size: smaller;">
-        Your order has been sent. You can track it here or in your transactions page.</div>
-    
-    <div onclick="order('${dateToHex(currentDate)}')" class="grey-btn nxt-btn"> track order <span class="bi bi-geo"></span></div> 
-    </div>
-    `;
-}
-
 const profile = () =>{ 
     appBody.innerHTML = "";
     appBody.innerHTML = `
@@ -1898,6 +1664,63 @@ const profile = () =>{
             <div class="list"> ${wrapInSpan('Books invoiced: ₦320,445')} </div>
             <div class="list"> ${wrapInSpan('verified payment: ₦200,000')} </div>
             <div class="list"> ${wrapInSpan('current outstanding: ₦20,445')} </div>
+
+    </div>
+    
+</div>
+
+
+    `;    
+}
+
+const customer_profile = async(ref) =>{ 
+    const sch_info = await window.get1School(ref);
+
+    console.log(sch_info);
+
+    appBody.innerHTML = "";
+    appBody.innerHTML = `
+
+    <div style=" border-radius: 5px; display: block;
+        align-items: center; margin: 10vh 0.5rem ; font-size: smaller;">
+         
+    <div style=" text-align: center; justify-content: center; font-size: large; font-weight: 500;">
+        ${sch_info.school_name}
+    </div>
+
+    <div style="box-shadow: 0px 0px 3px #6d6d6d; background-color:#f0f0f0;  width: 100%; display: grid; grid-template-columns: 2fr 10fr; column-gap: 10px;
+            align-items: center; margin: 10px auto; font-size: 12px;">
+        
+        <div class="bi bi-geo-alt" style="padding: 0.5rem 0.75rem; background-color: #fff; font-size: 1.5rem; box-shadow: 0px 0px 2px #dadada; 
+            border-radius: inherit; text-align: center;  margin: 1rem 10px;">
+        </div>
+        <div class="span" style="font-size: large; font-weight: bold; padding: 8px; padding-bottom: 12px; position: relative;"> 
+            <div style=" text-transform: lowercase; text-align: start; line-height: 1.5; font-size: 14px; ">
+                ${sch_info.school_address}
+            </div> 
+        </div>
+
+    </div>
+        <div style="box-shadow: 0px 0px 3px #6d6d6d; background-color:#f0f0f0;  width: 100%; display: grid; grid-template-columns: 2fr 10fr; column-gap: 10px;
+            align-items: center; margin: 10px auto; font-size: 12px;">
+        
+        <div class="bi bi-person" style="padding: 0.5rem 0.75rem; background-color: #fff; font-size: 1.5rem; box-shadow: 0px 0px 2px #dadada; 
+            border-radius: inherit; text-align: center;  margin: 1rem 10px;">
+        </div>
+        <div class="span" style="font-size: large; font-weight: 500; padding: 8px; padding-bottom: 12px; position: relative;"> 
+            <div style=" text-transform: lowercase; text-align: start; line-height: 1.5; font-size: 14px; ">
+                ${sch_info.contact_name  ? sch_info.contact_name : 'N/A'} <br/>
+                ${sch_info.contact_phone ? sch_info.contact_phone : 'N/A'}
+            </div> 
+        </div>
+
+    </div>
+ 
+
+    <div style="text-transform:none; background: #f0f0f0; box-shadow: 0px 0px 3px #6d6d6d; font-size: inherit;">
+            <div class="list"> Books invoiced: <span>₦320,445 </span> </div>
+            <div class="list"> verified payment: <span>₦200,000 </span>  </div>
+            <div class="list"> current outstanding: <span>₦20,445 </span> </div>
 
     </div>
     
@@ -2019,41 +1842,26 @@ const transactions = () =>{
             <div class="list" onclick="showPrice()">
                 <div> <span style="margin-left: 10px ;"> <i class="bi bi-newspaper"></i></span> <span>price list</span></div> <div></div>
             </div>
-            <div class="list" onclick="getPaymentList()">
-                <div> <span style="margin-left: 10px;"> <i class="bi bi-currency-exchange"></i></span> <span>sales</span> </div> <div></div>
-            </div>
-            
-            <div class="list">
-                <div><span style="margin-left: 10px;"> <i class="bi bi-journals"></i></span> <span>waybill</span></div> <div></div>
+             
+            <div class="list" onclick="getWayBill()">
+                <div><span style="margin-left: 10px;"> <i class="bi bi-journal-bookmark-fill"></i></span> <span>waybill</span></div> <div></div>
             </div>
              
-            <div class="list">
-                <div> <span style="margin-left: 10px;"> <i class="bi bi-person-circle"></i></span> <span>my customers</span> </div> <div><i class="bi bi-arrow-down-short"></i></div>
+            <div class="list" onclick="schoolList()">
+                <div> <span style="margin-left: 10px;"> <i class="bi bi-person-circle"></i></span> <span>my customers</span> </div> <div></div>
             </div>
-            <div class="dropdown-content myDropdown">
-                <div class="breadcrumb"><i class="bi bi-person-plus"></i>create new account</div> 
-                <div class="breadcrumb"><i class="bi bi-people"></i>current customers</div>  
-            </div>
-           
-            <div class="list">
-                <div><span style="margin-left: 10px"> <i class="bi bi-reply-all"></i></span> <span>returns</span> </div><div><i class="bi bi-arrow-down-short"></i></div>
+             
+            <div class="list" onclick="soon()">
+                <div><span style="margin-left: 10px"> <i class="bi bi-reply-all"></i></span> <span>returns</span> </div><div></div>
             </div> 
-                <div class="dropdown-content myDropdown">
-                    <div class="breadcrumb"><i class="bi bi-cup-hot"></i> requested returns</div> 
-                    <div class="breadcrumb"><i class="bi bi-sign-turn-left"></i>make new returns </div>  
-                </div> 
-            <div class="list">
-                <div><span style="margin-left: 10px ;"> <i class="bi bi-basket2"></i></span> <span>requisitions</span></div> <div><i class="bi bi-arrow-down-short"></i></div>
+              
+            <div class="list" onclick="supplyChart()">
+                <div> <span style="margin-left: 10px ;"> <i class="bi bi-bar-chart-line-fill"></i></span> <span>supply analysis</span></div> <div></div>
             </div>
-                <div class="dropdown-content myDropdown">
-                    <div onclick="cart()" class="breadcrumb"><i class="bi bi-highlighter"></i> write a new requisition</div> 
-                    <div onclick="invoice()" class="breadcrumb"><i class="bi bi-journal-text"></i> requisitions list</div> 
-                 </div>
-           
-            <div onclick="more()" class="list" id="more" >
-                <div><span style="margin-left: 10px ;"><i class="bi bi-menu-up"></i></span> more items</div>
-                <div></div>
-            </div>  
+            
+            <div class="list" onclick="waybillChart()">
+                <div> <span style="margin-left: 10px ;"> <i class="bi bi-diagram-3-fill"></i></span> <span>waybill chart</span></div> <div></div>
+            </div>   
 `;
 drop(); 
 } 
@@ -2065,6 +1873,25 @@ const rmvOldPop =()=>{
     }  
 }
 
+const soon =()=>{
+
+    let pop_up = document.querySelector('.pop-content');
+    pop_up.innerHTML = `
+
+    <div class="popBox">
+        Coming soon
+        <div style="float: right;" onclick="rmvOldPop()">
+            <i class="bi bi-x-circle-fill"></i>
+        </div>
+        <br/>
+    <img src="figures/undraw_refreshing_beverage_td3r.png" width="100%" />
+    <small style="text-transform: none; font-weight: 400">we are working on this feature and will be available soon</small>
+
+     
+    </div>
+    `;
+    pop_up.parentElement.style.display = oldPop.style.display === 'none' ? 'block' : 'none'; 
+}
  
 const parentElement = document.querySelector('#footer_box');
 if(parentElement){
@@ -2075,7 +1902,6 @@ if(parentElement){
         });
     });    
 }
-
 
  const dropTable = () =>{ 
     // Select all elements with class "list" and add a single event listener at a higher level
@@ -2185,6 +2011,7 @@ const add_pay =()=>{
                     <input type="text" style=" background-color: white; border-radius: 5px; text-align: left; color: black; margin: 10px auto; padding: 1.2rem; border: 1px solid #e0e0e0; width: calc(100% - 2.4rem);"/>
                 </div>
             </div>
+
         <div style="text-align: left">
             <p style="font-weight: bold">Payment Type: </p>
             <input class="payType" type="radio" name="type" value="Cheque"> Cheque
@@ -2293,14 +2120,22 @@ const terms_info = () =>{
 let currentDate = '';
 let ref_code = '';
 let setItem;
+let amt = ''; var in_ref = '';
 
 
+/*************************  invoice codes   ********************************** */
+
+function clearSel() {
+    const titleCat = document.querySelectorAll('.squ_bx');
+        if(titleCat){
+        titleCat.forEach(el =>{
+            el.classList.remove('bx_sel');
+        })  
+    }
+}
 
 const invoiceList = async () =>{
 
-    if(oldPop){
-        oldPop.style.display = 'none'; oldPop.innerHtml = '';
-    }
     const myInvoices = await getInvoiceList(); 
      
       try{
@@ -2314,11 +2149,10 @@ const invoiceList = async () =>{
             `;
             tBody.appendChild(tHead);
 
-            let school = '', invoice_date = '', invoice_status = '', invoice_ref = '';
+            let school = '', sch_address = '', invoice_status = '', invoice_ref = '';
 
             myInvoices.forEach(key => {
-                console.log('Invoices:', key);
-            
+               
                 if (typeof key === 'object' && key !== null){
                     
                     invoice_date = key.date;
@@ -2340,7 +2174,7 @@ const invoiceList = async () =>{
                             break;
                     
                         default:
-                            row.onclick = ()=>{ editDraft(key.ref) };
+                            row.onclick = ()=>{ editInvoice(key.ref) };
                             break;
                     }
                     row.innerHTML = `<td style="font-weight: bold;">${school}</td> <td style="text-align: left;">${invoice_date}</td> <td>${invoice_ref.toUpperCase()}</td> <td style="background-color:${bck};">${invoice_status}</td>`;
@@ -2354,13 +2188,10 @@ const invoiceList = async () =>{
               appBody.innerHTML = `
                 <h1 style="font-weight: 300; margin: 1rem auto; text-align: center;">Invoice</h1>
                 <div style=" text-transform:none; background: #f0f0f0; box-shadow: 0px 0px 3px #6d6d6d; margin: 10px auto;"> 
-                    <div class="list" style="text-align: center; margin: 5px auto; font-weight: bold;">select session <span><select style="background: white;"><option>select session...</option><option>2023/2024</option><select></span></div>
+                     <div class="list">write new invoice: <span class="grey-btn nxt-btn" style="width: fit-content; margin-right: -0.3rem;" onclick="add_invoice()">Add</span></div>
                 </div>
 
                 <div>
-                <div style=" text-transform:none; background: #f0f0f00f; box-shadow: 0px 0px 3px #6d6d6d; margin: 10px auto;"> 
-                        <div class="list">write new invoice: <span class="grey-btn nxt-btn" style="width: fit-content; margin-right: -0.3rem;" onclick="add_invoice()">Add</span></div>
-                </div>
             `;
             appBody.appendChild(invoice_table);
              
@@ -2376,10 +2207,10 @@ const invoiceList = async () =>{
                     <h1 style="font-weight: 300;">Invoice Book</h1>
                     <img src="figures/undraw_Personal_notebook_re_d7dc.png" width="100%" />
                     
-                    <div style="width: 70%; margin: 1rem auto; text-align: center; text-transform: none; font-size: smaller;">
+                    <div style="width: 80%; margin: 1rem auto; text-align: center; text-transform: none; font-size: smaller;">
                         your invoice book is empty, write a new invoice to get started.</div>
             
-                    <div class="grey-btn nxt-btn" onclick="add_invoice()"> write new invoice </div> 
+                    <div class="grey-btn nxt-btn list" style="width:60%; padding: 1rem"   onclick="add_invoice()"> write new invoice <i class="bi bi-highlighter" style="font-size: 1.5rem;"></i></div> 
             
                 </div>
             `;   
@@ -2395,9 +2226,10 @@ const displayInvoice = async(ref)=>{
     if(oldPop){
         oldPop.style.display = 'none'; oldPop.innerHtml = '';
     }
+    appBody.innerHTML = ''; //clear content body
     // Retrieve the array from storage 
     const storedOrder = await getAnInvoice(ref);
-     
+    invoiceItemsAry = []; //clear existing contents
     let myOrder = [];
     if (storedOrder) {
         myOrder = JSON.parse(storedOrder);
@@ -2409,6 +2241,7 @@ const displayInvoice = async(ref)=>{
     if (typeof myOrder === 'object' && myOrder !== null){
         cost = 0;
             let cart_table = document.createElement('table');
+            cart_table.id = 'table';
             cart_table.style.cssText = `box-shadow: 0px 0px 3px #6d6d6d;`;
             let tBody = document.createElement('tbody');
             let tHead = document.createElement('tr');
@@ -2438,6 +2271,7 @@ const displayInvoice = async(ref)=>{
              let dis = myOrder.rate === '0' ? 'none' : '';
 
             let sum_table = document.createElement('div');
+            sum_table.id = 'footer';
             sum_table.style.cssText = `font-size:smaller; text-transform:none; background: #f0f0f0; box-shadow: 0px 0px 3px #6d6d6d; margin: 10px auto;`
             sum_table.innerHTML = `
                 <div class="list" style="border-bottom: 1px solid #00000066;"> <span>cost of books:</span> <span><b>₦${addCommasToNumber(cost - disCal)}</b> <small style="margin-left: 1rem; display: ${dis}"><b>(discounted: ₦${addCommasToNumber(disCal.toFixed())})</b></small></span></div>   
@@ -2449,24 +2283,15 @@ const displayInvoice = async(ref)=>{
                 <div class="list"> invoiced on: <b>${myOrder.date}</b> </div> 
                 <div class="list">invoice status: <b>${myOrder.status}</b></div>
             `; 
-            
-            let tFoot = document.createElement('div');
-            tFoot.classList.add('btm_nav_box');
-            tFoot.innerHTML = `
-                <div class="list cancle-btn" onclick="clearCart()">
-                    <div style="font-size: 1rem; font-weight: bolder; margin-right: 13x;" class="bi bi-x-circle-fill"></div> cancel 
-                </div>
-                <div class="list proceed-btn nxt-btn" id="checkout" onclick="add_invoice()">modify 
-                    <div style="font-size: 1rem; font-weight: bolder;  margin-left: 13x;" class="bi bi-pencil-fill"></div> 
-                </div>
-            `;
-            appBody.innerHTML = ''; //clear content body
+          
+
             appBody.innerHTML = ` 
-            <div class="list">
-                <span>sales invoice</span> 
-                <span>no: <b>${myOrder.ref.toUpperCase()}</b></span>
-            </div> 
-                   
+            <div id="table_head">
+                <div class="list">
+                    <span>sales invoice</span> 
+                    <span>no: <b>${myOrder.ref.toUpperCase()}</b></span>
+                </div> 
+                    
                 <div style="  box-shadow: 0px 0px 3px #6d6d6d;
                     justify-items: center; align-items: center; 
                     margin: auto; 
@@ -2480,6 +2305,7 @@ const displayInvoice = async(ref)=>{
                     <div class="invoiceTab"><small class="fb-ar">School: </small>      <small style="text-align: left; text-transform: capitalize">${myOrder.school}</small></div>
                     <div class="invoiceTab"><small class="fb-ar">Address: </small>      <small style="text-align: left">${myOrder.address}</small></div> 
                 </div> 
+            </div>
                 `;
             let nav = document.createElement('div');
             nav.classList.add('btm_nav_box');
@@ -2517,6 +2343,7 @@ const displayInvoice = async(ref)=>{
                     checkbox.parentNode.style.backgroundColor = checkbox.checked ? 'aqua' : '';
                 });
             });
+
     }
     else{
         appBody.innerHTML = '';
@@ -2552,25 +2379,200 @@ const displayInvoice = async(ref)=>{
             }, 500);
             
         });
-    }    
+    } 
+     
 }
 
-function clearSel() {
-    const titleCat = document.querySelectorAll('.squ_bx');
-        if(titleCat){
-        titleCat.forEach(el =>{
-            el.classList.remove('bx_sel');
-        })  
+const verifyInvoice = async(ref) =>{
+
+    // Retrieve the array from local storage 
+    const storedOrder = await getAnInvoice(ref);
+     
+    let myOrder = [];
+
+    if (storedOrder) {
+        myOrder = JSON.parse(storedOrder); 
+    } else {
+        myOrder = [];
     }
-}
 
-const add_invoice = () =>{
-    let draftCode = '';
+    if (typeof myOrder === 'object' && myOrder !== null){
+    
+        cost = 0;
+        
+        let cart_table = document.createElement('table');
+        cart_table.style.marginBottom = '0.5rem';
+        cart_table.id = 'orderTable';
+        let tBody = document.createElement('tbody');
+        let tHead = document.createElement('tr');
+        tHead.innerHTML = `
+            <th>Book title </th> <th>price</th> <th >qty</th> <th>cost</th> 
+        `;
+        tBody.appendChild(tHead);
+        //console.log(myOrder);
+        myOrder.collections.forEach(item => {
+            let prize = getPrice(item.bk_sch, Number(item.b_id));
+            let row = document.createElement('tr');
+            row.innerHTML = `<td style="text-align:left; display: flex; justify-content: space-between;">${item.book} <input class="invoiceCheck" type="checkbox" /></td> 
+                            <td>₦${addCommasToNumber(prize)}</td> 
+                            <td >${item.qnt}</td> 
+                            <td >₦<b>${addCommasToNumber(prize * item.qnt)}</b></td>
+                            `;
+            tBody.appendChild(row);
+            cost += prize * item.qnt;
+        });
+      
+        cart_table.appendChild(tBody);
+        appBody.appendChild(cart_table);
+
+        let sum_table = document.createElement('table');
+        sum_table.id = 'sales_info';
+        sum_table.style.display = 'none';
+        sum_table.style.marginBottom = '0.5rem';
+        let sumBody = document.createElement('tbody'); 
+        sumBody.innerHTML = `
+            <tr><td><b>cost of books:</b></td><td id="bkCost">₦${addCommasToNumber(cost)}</td></tr>
+            <tr>
+                <td><b>discount</b></td>
+                <td style="align-items: center;
+                    display: grid;
+                    grid-template-columns: 4fr 1fr;
+                    gap: 15px;">
+                    <input min="0" max="15" id="discount" type="range" /><span id="discountVal"></span>  
+                </td>
+            </tr>
+            <tr>
+                <td><b>payment:</b></td>
+                <td>
+                    <input id="payDay" type="date" value="" />
+                </td>
+            </tr>
+            <tr><td><b>receiver:</b></td>
+                <td>
+                    <input id="receiver" type="text" value="" placeholder="receiver name..." />
+                </td>
+            </tr>
+            <tr><td><b>contact:</b></td>
+                <td>
+                    <input id="receiver_phone" name="shipping" type="number" value="" placeholder="receiver phone..." /> 
+                </td>
+            </tr>
+        `; 
+        sum_table.appendChild(sumBody);
+        
+        let tFoot = document.createElement('div');
+        tFoot.classList.add('btm_nav_box');
+        tFoot.style.width = '100%';
+        tFoot.innerHTML = `
+            <div class="list cancle-btn invc_btn bi bi-trash3-fill" id="${ref}" style="width: fit-content; display: block;" ></div>
+            <div class="list cancle-btn nxt-btn" style="width: fit-content; display: block" onclick="editInvoice('${ref}')">
+                <div style="font-size: x-large; color:black; font-weight: bolder;" class="bi bi-highlighter"></div> 
+            </div>
+            <div class="list proceed-btn nxt-btn" style="background-color:yellow; width: fit-content;" id="checkout" onclick="completeInvoiceVerification('${ref}')"> 
+                verify invoice <div style="font-size: large; font-weight: bolder; margin-left: 1rem" class="bi bi-patch-check-fill"></div>
+            </div>
+        `;
+        appBody.innerHTML = ''; //clear content body
+        appBody.innerHTML = `   
+            <div style="box-shadow: 0px 0px 2px #c9c9c9; border-radius: 5px; display: grid; grid-template-columns: 2fr 10fr; column-gap: 10px;
+                justify-items: center; align-items: center; margin: 1rem auto; margin-top: calc(1rem - 10px); width: 80%; background-color: #fff;">
+
+                <div class="bi bi-basket2" style="padding: 5px 1rem; font-size: 2.2rem; margin-right: -1rem; "></div>
+                <div class="span" style="margin-left: -3rem; font-size: x-large; font-weight: 300;">Verify Invoice</div>
+            </div>
+            <div style=" text-transform:none; background: #f0f0f0; box-shadow: 0px 0px 3px #6d6d6d; margin: 10px auto;">
+                <div class="invoiceTab"><small class="fb-ar">School Name: </small>      <small style="text-align: left">${myOrder.school}</small></div>
+                <div class="invoiceTab"><small class="fb-ar">Address: </small>      <small style="text-align: left">${myOrder.address}</small></div>
+                <div class="invoiceTab"><small class="fb-ar">Date: </small>      <small style="text-align: left">${myOrder.date}</small></div>
+            </div>
+        `;
+        appBody.appendChild(cart_table);
+        appBody.appendChild(sum_table); 
+        appBody.appendChild(tFoot);
+    }
+     
+    let discountRange = document.getElementById('discount');
+    let costBlock = document.getElementById('bkCost');
+    const payDay = document.getElementById('payDay');
+    
+    // Get the element to show/hide
+    const elementX = document.getElementById('sales_info');
+    const verifyBtn =  document.getElementById('checkout');
+
+    const receiver = document.getElementById('receiver');
+    const receiver_phone = document.getElementById('receiver_phone');
+     
+    // Function to check if inputs are filled and show/hide element z
+    function checkInputs() {
+        if (payDay.value !== '' && receiver.value !== '' && receiver_phone.value !== '') {
+            verifyBtn.style.display = ''; // Show element z
+        } else {
+            verifyBtn.style.display = 'none'; // Hide element z
+        }
+    }
+
+    // Add event listeners to inputs to trigger the check on change
+    payDay.addEventListener('change', checkInputs);
+    receiver.addEventListener('change', checkInputs);
+    receiver_phone.addEventListener('change', checkInputs);
+
+    // Initial check on page load
+    checkInputs(); 
+
+    disVal = document.getElementById('discountVal');
+
+    if(disVal){
+        disVal.innerHTML = discountRange.value + '%';
+
+        discountRange.oninput = () =>{
+        disVal.innerHTML = discountRange.value+'%';
+        let disCal = cost * (discountRange.value / 100);
+        costBlock.innerHTML = `₦${addCommasToNumber(cost - disCal)} <small style="float:right;">discount of: <b>₦${addCommasToNumber(disCal.toFixed())} </b></small>`;
+        };  
+    }
+
+    // Get all checkboxes
+    const checkboxes = document.querySelectorAll('.invoiceCheck'); 
+
+    // Add a change event listener to each checkbox
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            checkbox.parentNode.style.backgroundColor = checkbox.checked ? 'aqua' : '';
+        });
+    });
+
+    // Function to check if all checkboxes are checked
+    function areAllChecked() {
+        return Array.from(checkboxes).every(checkbox => checkbox.checked);
+    }
+
+    // Add event listener to each checkbox
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            // Show/hide elementX based on the checkbox states
+            elementX.style.display = areAllChecked() ? 'table' : 'none';
+        });
+    });
+
+    if(elementX && verifyBtn){
+        // Initial check on page load
+        elementX.style.display = areAllChecked() ? 'table' : 'none'; 
+    }
+
+           
+}
+ 
+const add_invoice = async() =>{
+    invoiceItemsAry = [];
+    let schId; let schIsNew = true;
+    let exSch = '', exAdrs = '';
     setlog = new Set();
     showingCart = true;
+
     if(oldPop){
         oldPop.style.display = 'none'; oldPop.innerHtml = '';
     }
+
    appBody.innerHTML = '';
 
     if (Array.isArray(invoiceItemsAry) && invoiceItemsAry.length > 0){
@@ -2688,20 +2690,14 @@ const add_invoice = () =>{
                 <!-- hidden dropdown begin -->
                 <div class="search_results" id="search-results"> 
                     <div class="dropdown-content-sm sbld" id="dropdown-content">
-                        <div style="border-bottom: 1px solid #ccc; padding: 10px; line-height: 1.5; margin-bottom: 5px; cursor: pointer;">
+                        <div style="padding: 10px; line-height: 1.5; margin-bottom: 5px; cursor: pointer;">
                             <div style="font-weight: lighter;"><span style="font-weight: bolder;">School saved name</span></div> 
                             <div style="font-weight: lighter;">Current Address</div>  
-                            <div style="font-weight: lighter;">contact person</div> 
-                        </div>
-                        <div style="border-bottom: 1px solid #ccc; padding: 10px; line-height: 1.5; cursor: pointer;">
-                            <div style="font-weight: lighter;"><span style="font-weight: bolder;">Full Blood Count:</span> 1145</div> 
-                            <div style="font-weight: lighter;"><span class=" ">Lab Adopted Parameter Range:</span> </div>  
-                            <div style="font-weight: lighter;"><span class=" ">LONIC Parameter Name:</span> </div> 
-                        </div>
+                        </div> 
                     </div>   
                 </div>
 
-                <input style="width: 90%; padding: 1rem; margin-bottom: 5px;" id="address" type="text" placeholder="school address"/>
+                <input style="width: 90%; padding: 1rem; margin-bottom: 5px;" id="schoolAddress" type="text" placeholder="school address"/>
                 <input style="width: 90%; padding: 1rem; margin-bottom: 5px;" id="requestDate" type="date" />
               </span>
 
@@ -2734,66 +2730,6 @@ const add_invoice = () =>{
       appBody.appendChild(reqDiv);    
     }
    
-    $(function(){
-        $('#requestDate').change(function(e){ 
-            e.preventDefault();
-            requisitionObject = {};
-            in_school = $('#schoolName').val().trim();
-            in_address = $('#address').val().trim();
-
-            document.getElementById('scName').innerHTML = in_school;
-            document.getElementById('scLoca').innerHTML = in_address;
-   
-            let verify = "draft"; 
-            let rqstDate = new Date($('#requestDate').val());
-            let date = new Date($('#requestDate').val());
-            
-            currentDate  = date.toISOString().split('T')[0];
-           
-            let day = rqstDate.getDate();
-            let month = rqstDate.getMonth() + 1;
-            let year = rqstDate.getFullYear();
-
-            selDate = writeMonth(month)+' '+ day +', '+ year;
-            document.getElementById('cDate').innerHTML = selDate;
-
-            //add season to invoice array
-            requisitionObject.season = '2023/2024';
-            //add date to invoice array
-            requisitionObject.date = selDate; 
-            //add school name to invoice array
-            requisitionObject.school = in_school;
-            //add address to invoice array
-            requisitionObject.address = in_address;
-            //add verification status
-            requisitionObject.status = verify;
-           
-            $('#requestData').show();
-            $('#introBlock').hide();
-            $('#requestDate').attr('readonly', true);
-              
-            let code = '';
-            let bkCdAry = in_school.split(' ');
-            for(let wrd of bkCdAry){
-              code += wrd.charAt(0);
-            }
-             //code + 
-            let nCode =  Math.floor(new Date().getTime() / 1000).toString(16);
-
-            //create a refId for the invoice
-            requisitionObject.ref = nCode;
-            //save ref code
-            ref_code = nCode;
-            draftCode = nCode;
-            
-            //update invoice collections
-            requisitionObject.collections = invoiceItemsAry;
-            //draft is new, create draft
-            saveInvoiceDraft(ref_code);
-            
-            }); 
-    }); 
-
     const titleCat = document.querySelectorAll('.squ_bx');
 
     function hasClass(element, className) {
@@ -2839,24 +2775,129 @@ const add_invoice = () =>{
             priceList = isCustom ? customPrice : officialPrice;
                            
             setTimeout(() => {
-                editDraft(ref_code);
+                editInvoice(ref_code);
             }, 500);
            
         });
     }
 
-    // document.getElementById("select_staff").addEventListener("click", toggleSuggest);
-    // const dropdownContentElement = document.getElementById("search-results");
+    const schoolNameInput = document.getElementById('schoolName');
+    const schoolAddressInput = document.getElementById('schoolAddress');
+    const searchResults = document.getElementById('search-results');
+    const dropdownContent = document.getElementById('dropdown-content');
+    
 
-    // Define a function named `toggleSuggest` using arrow function syntax
-    const toggleSuggest = () => {
-        // Check if `selectStaff` exists and does not have the class "disabled"
-        if (selectStaff && !selectStaff.classList.contains("disabled")) {
-            // Toggle the display of the `search_result` element based on its current style
-            // If the current display style is "none", set it to "block", otherwise set it to "none"
-            search_result.style.display = search_result.style.display === "none" ? "block" : "none";
-        }
-    };
+    const schools = await window.getAllSchool()
+    console.log(schools);
+    schoolNameInput.addEventListener('input', () => {
+      const searchTerm = schoolNameInput.value.toLowerCase();
+      const matchingSchools = schools.filter(school => 
+        school.school_name.toLowerCase().includes(searchTerm)
+      );
+    
+      dropdownContent.innerHTML = '';
+    
+      if (matchingSchools.length > 0 && searchTerm !== '') {
+        matchingSchools.forEach(school => {
+          const resultElement = document.createElement('div'); // Create a div element
+          resultElement.style.padding = '10px';
+          resultElement.style.lineHeight = '1.5';
+          resultElement.style.marginBottom = '5px';
+          resultElement.style.cursor = 'pointer';
+          
+          resultElement.innerHTML = `
+            <div ><span style="font-weight: 500;">${school.school_name}</span></div>
+            <div style="font-weight: lighter;">${school.school_address}</div>
+          `;
+          
+          resultElement.addEventListener('click', () => {
+            schoolNameInput.value = school.school_name; // Correct property name
+            schoolAddressInput.value = school.school_address; // Correct property name
+            searchResults.style.display = 'none';
+            schId = school.school_id;
+            schIsNew = false;
+          });
+    
+          dropdownContent.appendChild(resultElement);
+        });
+        searchResults.style.display = 'block'; 
+      } else {
+        searchResults.style.display = 'none'; 
+        schIsNew = true;
+      }
+    });
+
+    $(function(){
+        $('#requestDate').change(function(e){ 
+            e.preventDefault();
+            requisitionObject = {};
+            in_school = $('#schoolName').val().trim();
+            in_address = $('#schoolAddress').val().trim();
+
+            document.getElementById('scName').innerHTML = in_school;
+            document.getElementById('scLoca').innerHTML = in_address;
+   
+            let verify = "draft"; 
+            let rqstDate = new Date($('#requestDate').val());
+            let date = new Date($('#requestDate').val());
+            
+            currentDate  = date.toISOString().split('T')[0];
+           
+            let day = rqstDate.getDate();
+            let month = rqstDate.getMonth() + 1;
+            let year = rqstDate.getFullYear();
+
+            selDate = writeMonth(month)+' '+ day +', '+ year;
+            document.getElementById('cDate').innerHTML = selDate;
+
+            //add season to invoice array
+            requisitionObject.season = generateSession();
+            //add date to invoice array
+            requisitionObject.date = selDate; 
+            //add school name to invoice array
+            requisitionObject.school = in_school;
+            //add address to invoice array
+            requisitionObject.address = in_address;
+            //add verification status
+            requisitionObject.status = verify;
+
+           
+            $('#requestData').show();
+            $('#introBlock').hide();
+            $('#requestDate').attr('readonly', true);
+              
+            let code = '';
+            let bkCdAry = in_school.split(' ');
+            for(let wrd of bkCdAry){
+              code += wrd.charAt(0);
+            }
+             
+            let nCode =  Math.floor(new Date().getTime() / 1000).toString(16);
+            let sCode = code+nCode;
+            //create a refId for the invoice
+            requisitionObject.ref = nCode;
+
+            //add school unique-ref //code + 
+            requisitionObject.school_ref = schId ? schId : sCode;
+
+            //save ref code
+            ref_code = nCode;
+            draftCode = nCode;
+            
+            //update invoice collections
+            requisitionObject.collections = invoiceItemsAry;
+            //draft is new, create draft
+            saveInvoiceDraft(ref_code);
+            //register school if new
+            
+            if(schIsNew === true){
+                const regSch = window.createSchool(sCode, requisitionObject);
+                console.log(regSch);
+            }
+
+        }); 
+    });
+  
 }
 
 const saveInvoice = async (ref) =>{ 
@@ -2885,8 +2926,6 @@ const saveInvoiceDraft = async (ref) =>{
     }
 }
    
-let amt = ''; var in_ref = '';
-   
 const searchInvoiceList = (searchTerm, rfc) =>{
     let pop_up = document.querySelector('.pop-content');
     pop_up.innerHTML = '';
@@ -2914,18 +2953,22 @@ const searchInvoiceList = (searchTerm, rfc) =>{
      font-weight: bold; padding: 1rem; text-align: center;  margin-bottom: 1rem;`;
     let popNav = document.createElement('div'); 
     popNav.innerHTML = `
-        <span style="display:grid; grid-template-columns: 2fr 1fr; align-items: center; justify-content: center; font-size: medium; text-align: center; margin:0.5rem auto" >
-                Enter the quantity needed 
-            <small id="uploadList"  onclick="to_request('${ref_code}')" style="background: aqua;" class="ad_btn list"> <span>upload</span> <i class="bi bi-cloud-upload-fill"></i> </small>
-        </span>
+       <small>Please enter the quantity</small>
+        <div style="float: right;" onclick="rmvOldPop()">
+            <i class="bi bi-x-circle-fill"></i>
+        </div>
+        <br/><br/>
     `;
     let invoice_lyst = document.createElement('table');
-    
+    invoice_lyst.style.cssText = `display: block;
+                                    overflow: auto;
+                                    max-height: 50vh;`;
     let tBody = document.createElement('tbody');
     let tHead = document.createElement('tr');
     tHead.innerHTML = `
-        <th>Book title </th> <th>qty.</th> 
+        <th>Book title </th> <th>quantity</th> 
     `;
+    tHead.style.cssText = `position: sticky; top: 0;`;
     tBody.appendChild(tHead);
     setAry.forEach(item => {
         
@@ -2935,7 +2978,7 @@ const searchInvoiceList = (searchTerm, rfc) =>{
         let prize = getPrice(book_class, Number(book_id)); 
 
         let row = document.createElement('tr');
-        row.innerHTML = `<td id="${book_id}|${book_class}" style="text-align: left">${item.name.toLowerCase()}</td> 
+        row.innerHTML = `<td id="${book_id}|${book_class}" style="text-align: left; font-weight: 400;">${item.name.toLowerCase()}</td> 
                         <td class="qnt_text" contentEditable="true" style="box-shadow: 0px 0px 3px rgb(0, 140, 255) inset;">${amt}</td> 
                         `;
         tBody.appendChild(row);
@@ -2946,12 +2989,15 @@ const searchInvoiceList = (searchTerm, rfc) =>{
     invoice_lyst.style.marginBottom = `1rem`;
     popBody.appendChild(popNav);
     popBody.appendChild(invoice_lyst);
+    let foot =  document.createElement('div');
+    foot.innerHTML = `<small id="uploadList" style="background: aqua; align-items: center; justify-content: center;" class="ad_btn list"> <span style="margin-right: 1rem;">upload</span> <i class="bi bi-cloud-upload-fill"></i> </small>`;
+    popBody.appendChild(foot);
     pop_up.appendChild(popBody); 
     const editableElements = document.querySelectorAll('.qnt_text');
     if(editableElements){
         editableElements.forEach((element) => {
             let tytl, pryc, sect, bkSn, bkQnt;
-            let buID;
+            let buID; let intVal = Number(element.textContent);
             element.addEventListener('blur', () => {
                 console.log('value now: ', element.textContent);
                 bkQnt = Number(element.textContent);
@@ -2962,18 +3008,18 @@ const searchInvoiceList = (searchTerm, rfc) =>{
                 buID = fstChd.id;
                 bkSn = buID.split('|')[0];
                 sect = buID.split('|')[1];
-                if(isNaN(bkQnt) || bkQnt === 0){
-                    element.style.boxShadow = `0px 0px 3px 2px red inset`;
-                    return;
-                }else{
-                    const uploadList = document.getElementById('uploadList');
-                    uploadList.style.display = 'flex';
-                    toCart(tytl, bkQnt, pryc, sect, bkSn);
-                    element.style.boxShadow = `0px 0px 3px 2px rgb(38 255 0) inset`;
-                    //update invoice collections
-                    requisitionObject.collections = cartItemsAry;
-                    //save draft to local storage
-                    localStorage.setItem(ref_code, JSON.stringify(requisitionObject));
+                if(intVal !== bkQnt){
+                    if(isNaN(bkQnt) || bkQnt === 0){
+                        element.style.boxShadow = `0px 0px 3px 2px red inset`;
+                        return;
+                    }else{
+                        const uploadList = document.getElementById('uploadList');
+                        uploadList.onclick = () =>{ to_invoice(ref_code) };
+                        toCart(tytl, bkQnt, pryc, sect, bkSn);
+                        element.style.boxShadow = `0px 0px 3px 2px rgb(38 255 0) inset`;
+                        //update invoice collections
+                        requisitionObject.collections = cartItemsAry; 
+                    }
                 }
                 
             });
@@ -3008,10 +3054,10 @@ const to_invoice = async (ref_c)=>{
     
     pop_up.parentElement.style.display = oldPop.style.display === 'none' ? 'block' : 'none'; 
 
-    add_invoice();
+    editInvoice(ref_c);
 }
 
-const editDraft = async(ref_c) =>{
+const editInvoice = async(ref_c) =>{
     appBody.innerHTML = '';  ref_code = ref_c; in_ref = ref_c; 
 
     const storedOrder = await getAnInvoice(ref_c);
@@ -3050,9 +3096,9 @@ const editDraft = async(ref_c) =>{
                 let prize = getPrice(item.bk_sch, Number(item.b_id));
                 //console.log(prize, item.bk_sch, Number(item.b_id));
                 let row = document.createElement('tr');
-                row.innerHTML = `<td style="text-align: left">${item.book}</td> 
+                row.innerHTML = `<td id="${book_id}|${book_class}" style="text-align: left">${item.book}</td> 
                                 <td>₦${addCommasToNumber(prize)}</td> 
-                                <td onclick="pickBook(${book_id}, '${book_class}')" style="box-shadow: 0px 0px 3px rgb(0, 140, 255) inset;">${item.qnt}</td> 
+                                <td class="qnt_text" contentEditable="true" style="box-shadow: 0px 0px 3px rgb(0, 140, 255) inset;">${item.qnt}</td> 
                                 <td class="ibl" id="${indexToRemove}" style="box-shadow: 0px 0px 3px red inset;">₦${addCommasToNumber(prize * item.qnt)}</td>`;
                 tBody.appendChild(row);
                 
@@ -3183,107 +3229,85 @@ const editDraft = async(ref_c) =>{
         }
     }
    
-    $(function(){
-        $('#requestDate').change(function(e){ 
-            e.preventDefault();
-            requisitionObject = {};
-            in_school = $('#schoolName').val().trim();
-            in_address = $('#address').val().trim();
+    const titleCat = document.querySelectorAll('.squ_bx');
 
-            document.getElementById('scName').innerHTML = in_school;
-            document.getElementById('scLoca').innerHTML = in_address;
-   
-            let verify = "saved"; 
-            let rqstDate = new Date($('#requestDate').val());
-            let date = new Date($('#requestDate').val());
-            
-            currentDate  = date.toISOString().split('T')[0];
-           
-            let day = rqstDate.getDate();
-            let month = rqstDate.getMonth() + 1;
-            let year = rqstDate.getFullYear();
+    function hasClass(element, className) {
+        // Check if the element has the specified class using the classList API
+        return element.classList.contains(className);
+    }
 
-            selDate = writeMonth(month)+' '+ day +', '+ year;
-            document.getElementById('cDate').innerHTML = selDate;
-
-            //add season to invoice array
-            requisitionObject.season = '2023/2024';
-            //add date to invoice array
-            requisitionObject.date = selDate; 
-            //add school name to invoice array
-            requisitionObject.school = in_school;
-            //add address to invoice array
-            requisitionObject.address = in_address;
-            //add verification status
-            requisitionObject.status = verify;
-           
-            $('#requestData').show();
-            $('#introBlock').hide();
-            $('#requestDate').attr('readonly', true);
-
-            /**
-             * on click of selecting a date for the invoice,
-             * check if local copy of draft id exists, if it does,
-             * update it, else
-             *  create a local copy as draft
-             */
-              
-            let code = '';
-            let bkCdAry = in_school.split(' ');
-            for(let wrd of bkCdAry){
-              code += wrd.charAt(0);
-            }
-             
-            let nCode =  code + Math.floor(new Date().getTime() / 1000).toString(16);
-
-            //create a refId for the invoice
-            requisitionObject.ref = nCode;
-            //save ref code
-            ref_code = nCode;
-            draftCode = nCode;
-            
-            //update invoice collections
-            requisitionObject.collections = invoiceItemsAry;
-            //draft is new, create draft
-            //saveInvoiceDraft(nCode);
-            window.createInvoice(nCode, requisitionObject);
-            
-            });   
-        }); 
-      
-        const titleCat = document.querySelectorAll('.squ_bx');
-
-        function hasClass(element, className) {
-           // Check if the element has the specified class using the classList API
-            return element.classList.contains(className);
-        }
-
-        // set clicked btn to active
-        titleCat.forEach(bukBox => {
-            bukBox.addEventListener('click', () => {
-                bukBox.classList.toggle('bx_sel');
-                searchInvoiceList(bukBox.id);
-            });
-    
+    // set clicked btn to active
+    titleCat.forEach(bukBox => {
+        bukBox.addEventListener('click', () => {
+            bukBox.classList.toggle('bx_sel');
+            searchInvoiceList(bukBox.id);
         });
 
-        const priceTag = document.getElementById('togglePrice');
-         
-        if (priceTag && priceLabel) {
-            priceTag.addEventListener('change', () => {
-                const isCustom = priceTag.checked;
-                isCustom ? checkStat = 'checked' : checkStat = 'official pricelist';
+    });
 
-                isCustom ? priceLabel = 'custom price' : priceLabel = 'official price';
-                priceList = isCustom ? customPrice : officialPrice;
-                
-                setTimeout(() => {
-                    editDraft(ref_c);
-                }, 500);
-                
-            });
-        }
+    const priceTag = document.getElementById('togglePrice');
         
+    if (priceTag && priceLabel) {
+        priceTag.addEventListener('change', () => {
+            const isCustom = priceTag.checked;
+            isCustom ? checkStat = 'checked' : checkStat = 'official pricelist';
+
+            isCustom ? priceLabel = 'custom price' : priceLabel = 'official price';
+            priceList = isCustom ? customPrice : officialPrice;
+            
+            setTimeout(() => {
+                editInvoice(ref_c);
+            }, 500);
+            
+        });
+    }
+    const editableElements = document.querySelectorAll('.qnt_text');
+    if(editableElements){
+        editableElements.forEach((element) => {
+            let tytl, pryc, sect, bkSn, bkQnt;
+            let buID; let intVal = Number(element.textContent);
+            element.addEventListener('blur', () => {
+                 
+                bkQnt = Number(element.textContent);
+                
+                let fstChd = element.parentElement.firstElementChild;
+                tytl = fstChd.textContent;
+                pryc = fstChd.nextElementSibling.textContent;
+                buID = fstChd.id;
+                bkSn = buID.split('|')[0];
+                sect = buID.split('|')[1];
+                if(bkQnt !== intVal){
+                    if(isNaN(bkQnt) || bkQnt === 0){
+                        element.style.boxShadow = `0px 0px 3px 2px red inset`;
+                        return;
+                    }else{
+                        toCart(tytl, bkQnt, pryc, sect, bkSn);
+                        element.style.boxShadow = `0px 0px 3px 2px rgb(38 255 0) inset`;
+                        //update invoice collections
+                        requisitionObject.collections = invoiceItemsAry;
+
+                        window.updateInvoice(ref_c, JSON.stringify(requisitionObject), 'draft');
+                    }
+                }
+            });
+        });
+    }
+    // Get all editable elements on the page
+    const editableTabs = Array.from(document.querySelectorAll('.qnt_text'));
+
+    // Add event listener to each input element
+    editableTabs.forEach((tab, index) => {
+        tab.addEventListener('keydown', (event) => {
+            // Check if the pressed key is Enter
+            if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent the default behavior of the Enter key
+
+            // Move focus to the next input element
+            const nextIndex = (index + 1) % editableTabs.length;
+            editableTabs[nextIndex].focus();
+            }
+        });
+    });        
 
 }
 
@@ -3319,7 +3343,9 @@ const completeInvoiceVerification = async(ref_c) =>{
     requisitionObject.contact = $('#receiver_phone').val().trim();
 
     console.log(requisitionObject);
-
+    //update school details
+    await window.updateSchool(requisitionObject.school_ref, requisitionObject);
+    //update invoice
     await window.updateInvoice(ref_c, JSON.stringify(requisitionObject), 'verified');
     //load invoice for sharing
     displayInvoice(ref_c);
@@ -3327,8 +3353,18 @@ const completeInvoiceVerification = async(ref_c) =>{
 
 
 
-const requestForm = () =>{
-     
+
+
+
+
+
+
+/*************************  requisition codes   ********************************** */
+
+const requestForm = (exCd) =>{
+
+    console.log(exCd);
+
     let reqDiv = document.createElement('div');
         reqDiv.setAttribute('id', 'reqDiv'); 
         reqDiv.innerHTML = `
@@ -3356,49 +3392,81 @@ const requestForm = () =>{
       `;
       appBody.innerHTML = '';
       appBody.appendChild(reqDiv);
-       
-      $(function(){
-        $('#requestDate').change(function(e){ 
-          e.preventDefault();
-          requisitionObject = {};
-          let verify = "draft"; 
-          let rqstDate = new Date($('#requestDate').val());
-          let day = rqstDate.getDate();
-          let month = rqstDate.getMonth() + 1;
-          let year = rqstDate.getFullYear();
-              selDate = writeMonth(month)+' '+ day+getOrdinalSuffix(day) +', '+ year;
-          //add season to requsition array
-          requisitionObject.season = '2023/2024';
-          //add date to requsition array
-          requisitionObject.date = selDate;
-          //add verification status
-          requisitionObject.status = verify;
-  
-          $('#requestData').show();
-          $('#requestDate').hide();
-          $('#requestDate').attr('readonly', true); 
-                        
-          let code = '';
-          let bkCdAry = in_school.split(' ');
-          for(let wrd of bkCdAry){
-            code += wrd.charAt(0);
-          }
-           //code + 
-          let nCode =  Math.floor(new Date().getTime() / 1000).toString(16);
-  
-          //create a refId for the invoice
-          requisitionObject.ref = nCode;
-          //save ref code
-          ref_code = nCode;
-          draftCode = nCode;
-          
-          //update invoice collections
-          requisitionObject.collections = cartItemsAry;
-          //draft is new, create draft
-          saveRequestDraft(ref_code);
-        });
-   
-      });
+    if(exCd){ 
+              
+              requisitionObject = {};
+              let verify = "draft";  
+                  selDate = exCd;
+              //add season to requsition array
+              requisitionObject.season = generateSession();
+              //add date to requsition array
+              requisitionObject.date = selDate;
+              //add verification status
+              requisitionObject.status = verify;
+                    
+              let code = '';
+              let bkCdAry = in_school.split(' ');
+              for(let wrd of bkCdAry){
+                code += wrd.charAt(0);
+              }
+               //code + 
+              let nCode =  Math.floor(new Date().getTime() / 1000).toString(16);
+      
+              //create a refId for the invoice
+              requisitionObject.ref = nCode;
+              //save ref code
+              ref_code = nCode;
+              draftCode = nCode;
+              
+              //update invoice collections
+              requisitionObject.collections = cartItemsAry;
+              //draft is new, create draft
+              saveRequestDraft(ref_code);
+             
+    }else{
+        $(function(){
+            $('#requestDate').change(function(e){ 
+            e.preventDefault();
+            requisitionObject = {};
+            let verify = "draft"; 
+            let rqstDate = new Date($('#requestDate').val());
+            let day = rqstDate.getDate();
+            let month = rqstDate.getMonth() + 1;
+            let year = rqstDate.getFullYear();
+                selDate = writeMonth(month)+' '+ day+getOrdinalSuffix(day) +', '+ year;
+            //add season to requsition array
+            requisitionObject.season = generateSession();
+            //add date to requsition array
+            requisitionObject.date = selDate;
+            //add verification status
+            requisitionObject.status = verify;
+    
+            $('#requestData').show();
+            $('#requestDate').hide();
+            $('#requestDate').attr('readonly', true); 
+                            
+            let code = '';
+            let bkCdAry = in_school.split(' ');
+            for(let wrd of bkCdAry){
+                code += wrd.charAt(0);
+            }
+            //code + 
+            let nCode =  Math.floor(new Date().getTime() / 1000).toString(16);
+    
+            //create a refId for the invoice
+            requisitionObject.ref = nCode;
+            //save ref code
+            ref_code = nCode;
+            draftCode = nCode;
+            
+            //update invoice collections
+            requisitionObject.collections = cartItemsAry;
+            //draft is new, create draft
+            saveRequestDraft(ref_code);
+            });
+        });  
+    }
+
   
       const titleCat = document.querySelectorAll('.squ_bx');
       // set clicked btn to active
@@ -3412,57 +3480,66 @@ const requestForm = () =>{
   
 }
 
-const upload_request =()=>{
+const upload_request =(_date, ref)=>{
 
     let pop_up = document.querySelector('.pop-content');
     pop_up.innerHTML = `
-
-    <div style="font-size: larger; background-color: rgb(255, 255, 255); border-radius: 0.5rem;
-     font-weight: bold; padding: 1rem; text-align: center;  margin-bottom: 1rem;">Save Requisition<div style="float: right; margin-top: -6px;"></div><br/>
-     <small style="font-weight: 400;">upload a picture of your requisition slip to save</small>
-      <div style="font-weight: 400; font-size: smaller;">
+    <div id="picBox"></div>
+    <div class="popBox">Save Requisition
+        <div style="float: right;" onclick="rmvOldPop()">
+            <i class="bi bi-x-circle-fill"></i>
+        </div>
+        <br/><br/>
+     <small style="font-weight: 400;">upload a picture of your blue copy</small>
+      <div style="font-weight: 400; font-size: small;">
       <br/>
     
       <div style="display: grid; font-weight: 400;
-        font-size: smaller;grid-template-columns: 3fr 1fr 1fr;
+        font-size: smaller; grid-template-columns: 4fr 1fr;
         align-items: center;
         gap: 5px;">
 
         <small style="text-align: left; font-weight: 400;">
-            <input type="text" style="padding:1rem;" readonly placeholder="requisition pic..." />
+            <input type="text" style="padding:1rem; width: 85%; border-radius: 5px;" readonly value="request for: ${_date}" />
         </small>
-        <div class="bi bi-image" style="font-size: 2.1rem; color: gray; background: white;
-            border-radius: 5px;
-            padding: 3px 8px;
-            border: 1px solid #dfdfdf"></div>
-        <div class="bi bi-camera2" style="font-size: 2.1rem; color: gray;
+         
+        <div class="bi bi-camera2" style="font-size: 2.1rem;
             background: white;
             border-radius: 5px;
             padding: 3px 8px;
-            border: 1px solid #dfdfdf"></div>
+            border: 1px solid #dfdfdf" name="requestPic"></div>
       </div>
       
-      <div class="grey-btn nxt-btn" style="margin-top: 2rem;">Upload</div>
+      <div class="grey-btn nxt-btn" id="${ref}" name="uploadRequestPic" style="margin-top: 2rem; display: none">Upload</div>
     </div>
     </div>
     `;
-    pop_up.parentElement.style.display = oldPop.style.display === 'none' ? 'block' : 'none'; 
+    console.log(ref);
+    pop_up.parentElement.style.display = oldPop.style.display === 'none' ? 'block' : 'none';
+    const upBtn = document.querySelector('[name="uploadRequestPic"]');
+    const pixBox = document.querySelector('#picBox'); 
+    if(pixBox.innerHTML !== ''){
+        upBtn.style.display = 'block';
+    } 
+    else{
+        upBtn.style.display = '';
+    }
 }
 
-const saveRequisition = async (ref) =>{ 
-    //code to save to device db
-    //update invoice collections
-    requisitionObject.status = 'saved';
+const saveRequisition = async (ref) => {
+  // Save to device DB
+  requisitionObject.status = 'saved';
+  await window.updateRequest(ref, JSON.stringify(requisitionObject), 'saved');
 
-    await window.updateRequest(ref, JSON.stringify(requisitionObject), 'saved');
-    
-    //code to save to online db
-    //clear invoine cart
-    invoiceItemsAry = [];
+  // Save to online DB (implementation omitted for brevity)
 
-    //load list of invoice
-    //verifyInvoice(ref);
-}
+  // Clear invoice cart
+  invoiceItemsAry.length = 0; // More efficient way to clear an array
+
+  // Load list of invoices (implementation omitted for brevity)
+  // verifyInvoice(ref); 
+};
+
 
 const saveRequestDraft = async (ref) =>{
     //save draft to storage
@@ -3478,7 +3555,10 @@ const saveRequestDraft = async (ref) =>{
 
 const searchRequestList = (searchTerm) =>{
     let pop_up = document.querySelector('.pop-content');
-    pop_up.innerHTML = '';
+    if(pop_up){
+      pop_up.innerHTML = '';  
+    }
+    
     console.log(ref_code);
     // Flatten the nested array structure
     const namesData = bookList.flatMap(category => Object.values(category)[0]);
@@ -3502,17 +3582,21 @@ const searchRequestList = (searchTerm) =>{
      font-weight: bold; padding: 1rem; text-align: center;  margin-bottom: 1rem;`;
     let popNav = document.createElement('div'); 
     popNav.innerHTML = `
-        <span style="display:grid; grid-template-columns: 2fr 1fr; align-items: center; justify-content: center; font-size: medium; text-align: center; margin:0.5rem auto" >
-                Enter the quantity needed 
-            <small id="uploadList"  onclick="to_request('${ref_code}')" style="background: aqua;" class="ad_btn list"> <span>upload</span> <i class="bi bi-cloud-upload-fill"></i> </small>
-        </span>
+      <small>Please enter the quantity</small>
+        <div style="float: right;" onclick="rmvOldPop()">
+            <i class="bi bi-x-circle-fill"></i>
+        </div>
+        <br/><br/>
     `;
     let invoice_lyst = document.createElement('table');
-    
+    invoice_lyst.style.cssText = `display: block;
+                                    overflow: auto;
+                                    max-height: 50vh;`;
     let tBody = document.createElement('tbody');
     let tHead = document.createElement('tr');
+    tHead.style.cssText = `position: sticky; top: 0;`;
     tHead.innerHTML = `
-        <th>Book title </th> <th>qty.</th> 
+        <th>Book title </th> <th>quantity</th> 
     `;
     tBody.appendChild(tHead);
     setAry.forEach(item => {
@@ -3534,12 +3618,16 @@ const searchRequestList = (searchTerm) =>{
     invoice_lyst.style.marginBottom = `1rem`;
     popBody.appendChild(popNav);
     popBody.appendChild(invoice_lyst);
+    let foot =  document.createElement('div');
+    foot.innerHTML = `<small id="uploadList" style="background: aqua; align-items: center; justify-content: center;" class="ad_btn list"> <span style="margin-right: 1rem;">upload</span> <i class="bi bi-cloud-upload-fill"></i> </small>`;
+    popBody.appendChild(foot);
     pop_up.appendChild(popBody); 
+
     const editableElements = document.querySelectorAll('.qnt_text');
     if(editableElements){
         editableElements.forEach((element) => {
             let tytl, pryc, sect, bkSn, bkQnt;
-            let buID;
+            let buID; let intVal = Number(element.textContent);
             element.addEventListener('blur', () => {
                 console.log('value now: ', element.textContent);
                 bkQnt = Number(element.textContent);
@@ -3550,19 +3638,19 @@ const searchRequestList = (searchTerm) =>{
                 buID = fstChd.id;
                 bkSn = buID.split('|')[0];
                 sect = buID.split('|')[1];
-                if(isNaN(bkQnt) || bkQnt === 0){
-                    element.style.boxShadow = `0px 0px 3px 2px red inset`;
-                    return;
-                }else{
-                    const uploadList = document.getElementById('uploadList');
-                    uploadList.style.display = 'flex';
-                    toRequestCart(tytl, bkQnt, pryc, sect, bkSn);
-                    element.style.boxShadow = `0px 0px 3px 2px rgb(38 255 0) inset`;
-                    //update invoice collections
-                    requisitionObject.collections = cartItemsAry;
-                     
-                }
-                
+                if(intVal !== bkQnt){
+                    if(isNaN(bkQnt) || bkQnt === 0){
+                        element.style.boxShadow = `0px 0px 3px 2px red inset`;
+                        return;
+                    }else{
+                        const uploadList = document.getElementById('uploadList');
+                        uploadList.onclick = () =>{ to_request(ref_code) };
+                        toRequestCart(tytl, bkQnt, pryc, sect, bkSn);
+                        element.style.boxShadow = `0px 0px 3px 2px rgb(38 255 0) inset`;
+                        //update invoice collections
+                        requisitionObject.collections = cartItemsAry;
+                    }                    
+                } 
             });
         });
     }
@@ -3598,220 +3686,251 @@ const to_request = async (ref_c)=>{
     await editRequest(ref_c);
 }
 
-const displayRequest = async() =>{
+const verifyRequest = async(ref) =>{
+  let selDate;
+    // Retrieve the array from local storage 
+    const storedOrder = await window.get1Request(ref);
+     
+    let myOrder = [];
 
+    if (storedOrder) {
+        myOrder = JSON.parse(storedOrder); 
+    } else {
+        myOrder = [];
+    }
+
+    if (typeof myOrder === 'object' && myOrder !== null){
+    
+        cost = 0;
+        selDate = myOrder.date;
+        let cart_table = document.createElement('table');
+        cart_table.style.marginBottom = '0.5rem';
+        cart_table.id = 'orderTable';
+        let tBody = document.createElement('tbody');
+        let tHead = document.createElement('tr');
+        tHead.innerHTML = `
+            <th>Book title </th> <th>price</th> <th >qty</th> <th>cost</th> 
+        `;
+        tBody.appendChild(tHead);
+        //console.log(myOrder);
+        myOrder.collections.forEach(item => {
+            let prize = getPrice(item.bk_sch, Number(item.b_id));
+            let row = document.createElement('tr');
+            row.innerHTML = `<td style="text-align:left; display: flex; justify-content: space-between;">${item.book} <input class="invoiceCheck" type="checkbox" /></td> 
+                            <td>₦${addCommasToNumber(prize)}</td> 
+                            <td >${item.qnt}</td> 
+                            <td >₦<b>${addCommasToNumber(prize * item.qnt)}</b></td>
+                            `;
+            tBody.appendChild(row);
+            cost += prize * item.qnt;
+        });
+      
+        cart_table.appendChild(tBody);
+        appBody.appendChild(cart_table);
+
+        let tFoot = document.createElement('div');
+        tFoot.classList.add('btm_nav_box');
+        tFoot.style.width = '100%';
+        tFoot.innerHTML = `
+            <div class="list cancle-btn bi bi-trash3-fill" name="rqt_btn" id="${ref}" style="width: fit-content; display: block;" ></div>
+            <div class="list cancle-btn nxt-btn" style="width: fit-content; display: block" onclick="editRequest('${ref}')">
+                <div style="font-size: x-large; color:black; font-weight: bolder;" class="bi bi-highlighter"></div> 
+            </div>
+            <div class="list proceed-btn nxt-btn" style="background-color:yellow; width: fit-content;" id="${ref}" name="comfirm_verify"> 
+                verify <div style="font-size: large; font-weight: bolder; margin-left: 1rem" class="bi bi-patch-check-fill"></div>
+            </div>
+        `;
+        appBody.innerHTML = ''; //clear content body
+        appBody.innerHTML = `   
+            <div class="title-top">
+              <div class="bi bi-basket2" style="padding: 5px 1rem; font-size: 2.2rem; margin-right: -1rem;"></div>
+                <div class="span" style="font-size: large; font-weight: 300; text-align: center;">
+                <div>verify requisition</div>
+                <div><span style="font-size: small;"> </span></div>
+                </div>
+              <div  class="bi bi-check2" style="padding: 5px 1rem; font-size: 1.3rem;"></div>
+            </div> 
+              <div id="reqTitle"  style="text-align: center">
+                  <div style="margin-bottom:1rem;" > 
+                      <span style="font-size: small; vertical-align: middle;" >verifying requisition for <b>${selDate}</b></span> 
+                  </div> 
+              </div>
+        `;
+        appBody.appendChild(cart_table); 
+        appBody.appendChild(tFoot);
+    }
+     
+  
+    // Get the element to show/hide
+    const verifyBtn =  document.querySelector('[name="comfirm_verify"]');
+
+    // Get all checkboxes
+    const checkboxes = document.querySelectorAll('.invoiceCheck'); 
+
+    // Add a change event listener to each checkbox
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            checkbox.parentNode.style.backgroundColor = checkbox.checked ? 'aqua' : '';
+        });
+    });
+
+    // Function to check if all checkboxes are checked
+    function areAllChecked() {
+        return Array.from(checkboxes).every(checkbox => checkbox.checked);
+    }
+
+    // Add event listener to each checkbox
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            // Show/hide verifyBtn based on the checkbox states
+            verifyBtn.style.display = areAllChecked() ? 'ruby' : 'none';
+        });
+    });
+
+    if(verifyBtn){
+        // Initial check on page load
+        verifyBtn.style.display = areAllChecked() ? 'ruby' : 'none'; 
+    }
+          
+}
+ 
+const requestList = async () => {
+  try {
     const myRequests = await window.getRequestList();
     console.log(myRequests);
 
-    if(oldPop){
-        oldPop.style.display = 'none'; oldPop.innerHtml = '';
-    }
+    appBody.innerHTML = ''; // Clear appBody content at the beginning
 
-    try{
-        if(myRequests.length  !== 0){
-            let requiTab = document.createElement('table');
-            requiTab.style.backgroundColor = 'white'; 
-            let tBody = document.createElement('tbody');
-            let tHead = document.createElement('tr');
-            tHead.innerHTML = ` 
+    if (myRequests.length !== 0) {
+      let requiTab = document.createElement('table');
+      requiTab.style.backgroundColor = 'white';
+      let tBody = document.createElement('tbody');
+      let tHead = document.createElement('tr');
+      tHead.innerHTML = ` 
                 <th>Date</th> 
-                <th class="flat">status  <input class="payCheck" type="checkbox" /> </th>  
+                <th class="flat">status  <input id="payCheck" type="checkbox" /> </th>  
             `;
-            tBody.appendChild(tHead);
-            let school = '', invoice_date = '', invoice_status = '', invoice_ref = '';
-            let hasDraft = false;
+      tBody.appendChild(tHead);
 
-            myRequests.forEach(key => {          
-                if (typeof key === 'object' && key !== null){
-                    
-                    invoice_date = key.date;
-                    school = key.school;
-                    invoice_status = key.status;
-                    invoice_ref = key.ref;
+      let hasDraft = false;
+      let isPending = false;
+      let selDate;
+      myRequests.forEach(key => {
+        if (typeof key === 'object' && key !== null) {
+          const invoice_date = key.date;
+          const school = key.school;
+          const invoice_status = key.status;
+          const invoice_ref = key.ref;
+          selDate = invoice_date;
 
-                    let fwd, bck = '';
+          let row = document.createElement('tr');
+          let bck = ''; // Default background color
 
-                    let row = document.createElement('tr');
-                    switch (invoice_status) {
-                        case 'verified':
-                            row.onclick = ()=>{ displayInvoice(key.ref) };
-                            bck = '#00ffff61';
-                            break;
-                        case 'pending':
-                            row.onclick = ()=>{verifyInvoice(key.ref) };
-                            bck = '#ffff0069';
-                            break;
-                    
-                        default:
-                            row.onclick = ()=>{ editRequest(key.ref) };
-                            hasDraft = true;
-                            break;
-                    }
-                    row.innerHTML = `  
+          switch (invoice_status) {
+            case 'verified':
+              row.onclick = () => {
+                displayRequest(key.ref);
+              };
+              bck = '#00ffff61';
+              break;
+            case 'pending':
+              row.onclick = () => {
+                verifyRequest(key.ref);
+              };
+              isPending = true;
+              bck = '#ffff0069';
+              break;
+            default:
+              row.onclick = () => {
+                editRequest(key.ref);
+              };
+              hasDraft = true;
+              break;
+          }
+          row.innerHTML = `  
                     <td style="text-align: left;">${invoice_date}</td>  
                     <td style="background-color:${bck};">${invoice_status}</td>`;
- 
-                    tBody.appendChild(row);
-                }                
-            });
 
-            requiTab.appendChild(tBody);
-
-            let pendingBlock = document.createElement('div');
-            pendingBlock.style.cssText = `text-transform:none; background: #f0f0f00f; box-shadow: 0px 0px 3px #6d6d6d; margin: 10px auto;`;
-
-            // Create the initial structure
-            pendingBlock.innerHTML = `
-                <div class="list">Pending requisition <span></span></div>
-
-                <div class="list">
-                    <div>${invoice_date} <b><i class="bi bi-arrow-down-short"></i></b></div>
-                    <div class="mid"> <i class="bi bi-basket"></i></div> 
-                </div>
-
-                <div class="dropdown-content myDropdown" id="reqTab"></div>
-
-                <div id="payBtn" class="list" style="display: none;">
-                    Verify request: 
-                    <span class="grey-btn nxt-btn" style="width: fit-content; margin-right: -0.3rem;" onclick="verify_pay()">yes</span>
-                </div>
-            `;
-            
-            appBody.innerHTML = `
-                <h1 style="font-weight: 300; margin: 1rem auto; text-align: center;">Requisition</h1>
-                    <div style="text-transform: none;
-                        background: #f7f7f7;
-                        box-shadow: 0px 0px 3px #c5c5c5;
-                        margin: 2px auto;"> 
-                        <div class="list" style="text-align: center; margin: 5px auto; font-weight: bold;">Season: <span><select style="background: white;"><option>select season...</option><option>2023/2024</option><select></span></div>
-                    </div>
-
-                <div>
-                <div id="newREQ" style=" text-transform:none; background: #f0f0f00f; box-shadow: 0px 0px 3px #6d6d6d; margin: 10px auto;"> 
-                        <div class="list">write new requisition: <span class="grey-btn nxt-btn" style="width: fit-content; margin-right: -0.3rem;" onclick="requestForm()">Add</span></div>
-                </div>
-            `;
-            pendingBlock.children[2].appendChild(requiTab);
-            const newREQBtn =  document.querySelector('#newREQ');
-            if(hasDraft === true){
-                newREQBtn.style.display = 'none';
-            }else{
-                newREQBtn.style.display = '';
-            }
-            
-            appBody.appendChild(pendingBlock);
-
-             
+          tBody.appendChild(row);
         }
-        else{
-            
-            appBody.innerHTML = '';
-            if(oldPop){
-                oldPop.style.display = 'none'; oldPop.innerHtml = '';
-            }
-            appBody.innerHTML = `
+      });
+
+      requiTab.appendChild(tBody);
+
+      // Create pendingBlock structure
+      let pendingBlock = document.createElement('div');
+      pendingBlock.style.cssText = `text-transform:none; background: #f0f0f00f; box-shadow: 0px 0px 3px #6d6d6d; margin: 10px auto;`;
+      pendingBlock.innerHTML = `
+                <div class="list">Pending requisition <span> <i class="bi bi-basket2"></i></span></div>
+                <div id="reqTab"></div>
+                <div id="payBtn" class="list" style="display: none;">
+                    add to waybill: 
+                    <span class="grey-btn nxt-btn" style="width: fit-content; margin-right: -0.3rem;" onclick="addWaybil()">yes</span>
+                </div>
+            `;
+
+      // Append elements to appBody in the correct order
+      appBody.innerHTML = `
+                <h1 style="font-weight: 300; margin: 1rem auto; text-align: center;">Requisition</h1>
+                <div style="text-transform: none; background: #f7f7f7; box-shadow: 0px 0px 3px #c5c5c5; margin: 2px auto;"> 
+                    <div class="list">
+                        verified requisition: 
+                        <span>
+                            <div class="grey-btn nxt-btn bi bi-journal-bookmark-fill" style="width: fit-content;" onclick="loadWayBill()"></div>
+                        </span>
+                    </div>
+                </div>
+                <hr style="border:1px solid #ccc"/>
+                <div id="newREQ" style="text-transform: none; background: #f7f7f7; box-shadow: 0px 0px 3px #c5c5c5; margin: 2px auto;"> 
+                    <div class="list">write new requisition: <span class="grey-btn nxt-btn" style="width: fit-content; margin-right: -0.3rem; background: yellow" onclick="requestForm('${selDate}')">Add</span></div>
+                </div>
+            `;
+      appBody.appendChild(pendingBlock);
+     
+      // Now append the table to the correct container within pendingBlock
+      pendingBlock.querySelector('#reqTab').appendChild(requiTab);
+      elementX =  document.getElementById('payBtn');
+      const newREQBtn = document.getElementById('newREQ');
+      const payboxes = document.getElementById('payCheck'); // Get the checkbox after adding it to the DOM
+      
+      if (newREQBtn) {
+        newREQBtn.style.display = hasDraft ? 'none' : '';
+      }
+       
+      if (payboxes) {
+        payboxes.style.display = isPending ? 'none' : '';
+        
+        // Add event listener to the checkbox (if it exists)
+        payboxes.addEventListener('change', function() {
+          if (elementX) { 
+            elementX.style.display = this.checked ? 'flex' : 'none';
+          }
+        });
+      }
+    } else {
+      // No requisitions found
+      appBody.innerHTML = `
                 <div style="margin: 10px auto; text-align: center;">
                     <h1 style="font-weight: 300;">Requisition</h1>
-
-                    <div style="text-transform: none;
-                        background: #f7f7f7;
-                        box-shadow: 0px 0px 3px #c5c5c5;
-                        margin: 2px auto;"> 
-                        <div class="list" style="text-align: center; margin: 5px auto; font-weight: bold;">Season: <span><select style="background: white;"><option>select season...</option><option>2023/2024</option><select></span></div>
-                    </div>
-
                     <img src="figures/undraw_Diary_re_4jpc.png" width="100%" />
-                    
-                    <div style="width: 70%; margin: 1rem auto; text-align: center; text-transform: none; font-size: smaller;">
-                        your requisition log is empty, write a new requisition or select a different season to get started.</div>
-            
-                    <div class="grey-btn nxt-btn" onclick="requestForm()"> new requisition </div> 
-            
+                    <div style="width: 80%; margin: 1rem auto; text-align: center; text-transform: none; font-size: smaller;">
+                        there are no pending requisitions, start a new requisition or check your waybill
+                    </div>
+                    <div class="list">    
+                        <div class="grey-btn nxt-btn bi bi-journal-bookmark-fill" style="width: fit-content; font-size: 1.5rem" onclick="loadWayBill()"></div>
+                        <div class="grey-btn nxt-btn" style="background: yellow; padding: 0.7rem; width: 65%; display: flex; align-items: center; justify-content: space-around;" onclick="requestForm()"> new requisition <i class="bi bi-highlighter" style="font-size: 1.3rem"></i></div> 
+                    </div>
                 </div>
-            `;   
-        }        
-      }catch(err){
-        console.error('Error reading data:', err.message || err);
-      }
-    
-    //appBody.innerHTML = '';
-    let appBody_innerHTML = `
-
-    <div style=" ">   
-            <div class="list">Pending requisition: <b>₦502,345 </b> </div>
-            <div class="list">
-                <div><b>₦502,345 </b><i class="bi bi-arrow-down-short"></i></div>
-                <div class="mid"> 12/02/2023 </div> 
-            </div>
-                <div class="dropdown-content myDropdown"> 
-                    <table style="background: white;">
-                        <tbody>
-                            <tr><th>Amount</th> <th>Date</th> <th class="flat">status  <input class="payCheck" type="checkbox" /> </th></tr>
-                            <tr><td style="font-weight: bold;">₦52,000 </td> <td>12/02/2023 <span class="bi bi-image" style="margin-left:10px;"></span></td> <td>pending <span class="bi bi-x-circle-fill" style="margin-left:10px; color: red;"></span></td></tr> 
-                            <tr><td style="font-weight: bold;">₦252,000 </td> <td >12/02/2023 <span class="bi bi-image" style="margin-left:10px;"></span></td> <td>received </td></tr>
-                        </tbody>
-                    </table>
-                    <div id="payBtn" class="list" style="display: none;">Verify request: <span class="grey-btn nxt-btn" style="width: fit-content; margin-right: -0.3rem;" onclick="verify_pay()">yes</span></div>
-                </div>
-    </div>
-
-    <div style=" text-transform:none; background: #f0f0f00f; box-shadow: 0px 0px 3px #6d6d6d; margin: 10px auto;">   
-      
-            <div class="list"> Waybill: <b>₦502,345 </b> </div> 
-            
-            <div class="list">
-                <div><b>₦132,000</b> <i class="bi bi-arrow-down-short"></i> </div> <div class="mid">15/05/2023 <i class="bi bi-journals"></i></div>
-            </div>
-            <div class="dropdown-content myDropdown">
-                    <table style="background: white; ">
-                        <tbody>
-                            <tr><th>Amount</th> <th>Date</th> <th>status</th></tr>
-                            <tr><td style="font-weight: bold;">₦52,000 </td> <td>12/02/2023 <span class="bi bi-image" style="margin-left:10px;"></span></td> <td>received </td></tr> 
-                            <tr><td style="font-weight: bold;">₦252,000 </td> <td >12/02/2023 <span class="bi bi-image" style="margin-left:10px;"></span></td> <td>received </td></tr>
-                        </tbody>
-                    </table>  
-            </div>
-                        
-            <div class="list">
-                <div><b>₦332,000</b> <i class="bi bi-arrow-down-short"></i> </div> <div class="mid">15/05/2023 <i class="bi bi-journals"></i></div>
-            </div>
-            <div class="dropdown-content myDropdown">
-                    <table style="background: white; ">
-                        <tbody>
-                            <tr><th>Amount</th> <th>Date</th> <th>status</th></tr>
-                            <tr><td style="font-weight: bold;">₦52,000 </td> <td>12/02/2023 <span class="bi bi-image" style="margin-left:10px;"></span></td> <td>received </td></tr> 
-                            <tr><td style="font-weight: bold;">₦252,000 </td> <td >12/02/2023 <span class="bi bi-image" style="margin-left:10px;"></span></td> <td>received </td></tr>
-                        </tbody>
-                    </table>  
-            </div>
-       
-        </div>
-    </div>
-    `;
-              
-    const payboxes = document.querySelectorAll('.payCheck');
-    // Get the element to show/hide
-    const elementX = document.getElementById('payBtn');
-
-    // Add a change event listener to each checkbox
-    payboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function() { 
-            // Check if any checkbox is checked
-            const isAnyChecked = Array.from(payboxes).some(function(checkbox) {
-              return checkbox.checked;
-            });
-    
-            // Show or hide the element based on the checkbox state
-            elementX.style.display = isAnyChecked ? 'flex' : 'none';
-          });
-    });
-
-    dropTable();  
-}
+            `;
+    }
+  } catch (err) {
+    console.error('Error in requestList:', err);
+  }
+};
 
 const editRequest = async(ref_c) =>{
     appBody.innerHTML = '';  ref_code = ref_c; in_ref = ref_c; 
-
+    let selDate;
     const storedOrder = await window.get1Request(ref_c);
      
     let myOrder = [];
@@ -3848,8 +3967,8 @@ const editRequest = async(ref_c) =>{
                 let prize = getPrice(item.bk_sch, Number(item.b_id));
                 
                 let row = document.createElement('tr');
-                row.innerHTML = `<td style="background: white; text-align: left; box-shadow: 0px 0px 3px red inset;">${item.book}</td> 
-                                <td onclick="pickBook(${book_id}, '${book_class}')" style="box-shadow: 0px 0px 3px rgb(0, 140, 255) inset;">${item.qnt}</td> 
+                row.innerHTML = `<td id="${book_id}|${book_class}" style="background: white; text-align: left; box-shadow: 0px 0px 3px red inset;">${item.book}</td> 
+                                <td class="qnt_text" contentEditable="true" style="box-shadow: 0px 0px 3px rgb(0, 140, 255) inset;">${item.qnt}</td> 
                                `;
                 tBody.appendChild(row);
                 
@@ -3861,32 +3980,33 @@ const editRequest = async(ref_c) =>{
             let tFoot = document.createElement('div');
             tFoot.classList.add('btm_nav_box');
             tFoot.innerHTML = `
-                <div class="list cancle-btn invc_btn bi bi-trash3-fill" id="${myOrder.ref}" style="width: fit-content; display: block;" ></div>
-                <div class="list proceed-btn nxt-btn" style="background-color:yellow; width: fit-content;" id="checkout" onclick="upload_request('${myOrder.ref}')"> 
-                    save   <div style="font-size: large; font-weight: bolder; margin-left: 1rem" class="bi bi-cloud-upload-fill"></div>
+                <div name="rqt_btn" class="list cancle-btn bi bi-trash3-fill" id="${myOrder.ref}" style="width: fit-content; display: block;" ></div>
+                <div class="list proceed-btn nxt-btn" style="background-color:yellow; width: fit-content;" id="checkout" onclick="upload_request('${myOrder.date}', '${myOrder.ref}')"> 
+                    save <div style="font-size: large; font-weight: bolder; margin-left: 1rem" class="bi bi-cloud-upload-fill"></div>
                 </div>
             `;
             appBody.innerHTML = `   
-            <div class="title_box" style="background-color: #fff;">
-                <div class="bi bi-highlighter" style="padding: 5px 1rem; font-size: 2.2rem;"></div>
-                <div class="span" style="margin-left: -3rem; font-size: x-large; font-weight: 300;">Requisition</div>
+            <div class="" style="background-color: #fff;"> 
+                <div class="span" style="font-size: x-large; font-weight: 300;">Requisition</div>
             </div> 
 
-              <div id="reqTitle"  style="text-align: center">
-                  <div style="margin-bottom:1rem;" > 
-                      <span style="font-size: small; vertical-align: middle;" >updating requisition for <b>${selDate}</b></span> 
-                  </div> 
-              </div> 
+            <div id="reqTitle"  style="text-align: center">
+                <div style="margin-bottom:1rem;" > 
+                    <span style="font-size: small; vertical-align: middle;">updating requisition for <b>${selDate}</b></span> 
+                </div> 
+            </div> 
 
-                <div style=" margin: 0.5rem auto; overflow: auto; white-space: nowrap;">
-                    <small id="prep" class="squ_bx"> prep. work</small> <small id="math" class="squ_bx "> maths</small>    <small id="english" class="squ_bx">english</small>    <small id="spelling" class="squ_bx">spelling</small>
-                    <small id="phonics" class="squ_bx">phonics</small>    <small id="colour" class="squ_bx">colouring</small>    <small id="cultural" class="squ_bx "> cult. arts</small>
-                    <small id="quant" class="squ_bx "> quant.</small>    <small id="verbal" class="squ_bx">verbal</small>    <small id="grammar" class="squ_bx">eng. grm</small>
-                </div>
+            <div style=" margin: 0.5rem auto; overflow: auto; white-space: nowrap;">
+                <small id="prep" class="squ_bx"> prep. work</small> <small id="math" class="squ_bx "> maths</small>    <small id="english" class="squ_bx">english</small>    <small id="spelling" class="squ_bx">spelling</small>
+                <small id="phonics" class="squ_bx">phonics</small>    <small id="colour" class="squ_bx">colouring</small>    <small id="cultural" class="squ_bx "> cult. arts</small>
+                <small id="quant" class="squ_bx "> quant.</small>    <small id="verbal" class="squ_bx">verbal</small>    <small id="grammar" class="squ_bx">eng. grm</small>
+            </div>
             `;
             
             appBody.appendChild(cart_table); 
-            appBody.appendChild(tFoot);   
+            appBody.appendChild(tFoot);
+            
+
         }
         else{
                        
@@ -3902,16 +4022,15 @@ const editRequest = async(ref_c) =>{
             tFoot.classList.add('btm_nav_box');
              
              appBody.innerHTML = `   
-                <div class="title_box" style="background-color: #fff;">
-                    <div class="bi bi-highlighter" style="padding: 5px 1rem; font-size: 2.2rem;"></div>
-                    <div class="span" style="margin-left: -3rem; font-size: x-large; font-weight: 300;">Requisition</div>
-                </div> 
+            <div class="" style="background-color: #fff;"> 
+                <div class="span" style="font-size: x-large; font-weight: 300;">Requisition</div>
+            </div> 
 
-              <div id="reqTitle"  style="text-align: center">
-                  <div style="margin-bottom:1rem;" > 
-                      <span style="font-size: small; vertical-align: middle;" >updating requisition for <b>${selDate}</b></span> 
-                  </div> 
-              </div> 
+            <div id="reqTitle"  style="text-align: center">
+                <div style="margin-bottom:1rem;" > 
+                    <span style="font-size: small; vertical-align: middle;">writing requisition for <b>${selDate}</b></span> 
+                </div> 
+            </div>  
 
                 <div style=" margin: 0.5rem auto; overflow: auto; white-space: nowrap;">
                     <small id="prep" class="squ_bx"> prep. work</small> <small id="math" class="squ_bx "> maths</small>    <small id="english" class="squ_bx">english</small>    <small id="spelling" class="squ_bx">spelling</small>
@@ -3949,7 +4068,7 @@ const editRequest = async(ref_c) =>{
             document.getElementById('cDate').innerHTML = selDate;
 
             //add season to invoice array
-            requisitionObject.season = '2023/2024';
+            requisitionObject.season = generateSession();
             //add date to invoice array
             requisitionObject.date = selDate; 
             //add school name to invoice array
@@ -4011,11 +4130,187 @@ const editRequest = async(ref_c) =>{
             priceList = isCustom ? customPrice : officialPrice;
             
             setTimeout(() => {
-                editDraft(ref_c);
+                editInvoice(ref_c);
             }, 500);
             
         });
     }
+
+    const editableElements = document.querySelectorAll('.qnt_text');
+    if(editableElements){
+        editableElements.forEach((element) => {
+            let tytl, pryc, sect, bkSn, bkQnt;
+            let buID; let intVal = Number(element.textContent);
+            element.addEventListener('blur', () => {
+                 
+                bkQnt = Number(element.textContent);
+                
+                let fstChd = element.parentElement.firstElementChild;
+                tytl = fstChd.textContent;
+                pryc = fstChd.nextElementSibling.textContent;
+                buID = fstChd.id;
+                bkSn = buID.split('|')[0];
+                sect = buID.split('|')[1];
+                if(bkQnt !== intVal){
+                    if(isNaN(bkQnt) || bkQnt === 0){
+                        element.style.boxShadow = `0px 0px 3px 2px red inset`;
+                        return;
+                    }else{
+                        toRequestCart(tytl, bkQnt, pryc, sect, bkSn);
+                        element.style.boxShadow = `0px 0px 3px 2px rgb(38 255 0) inset`;
+                        //update invoice collections
+                        requisitionObject.collections = cartItemsAry;
+
+                        window.updateRequest(ref_c, JSON.stringify(requisitionObject), 'edited');
+                    }
+                }
+            });
+        });
+    }
+    // Get all editable elements on the page
+    const editableTabs = Array.from(document.querySelectorAll('.qnt_text'));
+
+    // Add event listener to each input element
+    editableTabs.forEach((tab, index) => {
+        tab.addEventListener('keydown', (event) => {
+            // Check if the pressed key is Enter
+            if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent the default behavior of the Enter key
+
+            // Move focus to the next input element
+            const nextIndex = (index + 1) % editableTabs.length;
+            editableTabs[nextIndex].focus();
+            }
+        });
+    });
+}
+
+const displayRequest = async(ref)=>{
+    if(oldPop){
+        oldPop.style.display = 'none'; oldPop.innerHtml = '';
+    }
+    // Retrieve the array from storage 
+    const storedOrder = await window.get1Request(ref);
+    let selDate;
+    invoiceItemsAry = []; //clear existing contents
+    let myOrder = [];
+    if (storedOrder) {
+        myOrder = JSON.parse(storedOrder);
+        //myOrder = storedOrder;
+    } else {
+        myOrder = [];
+    }
+     
+    if (typeof myOrder === 'object' && myOrder !== null){
+        cost = 0;
+            let cart_table = document.createElement('table');
+            cart_table.style.cssText = `box-shadow: 0px 0px 3px #6d6d6d;`;
+            let tBody = document.createElement('tbody');
+            let tHead = document.createElement('tr');
+            tHead.innerHTML = `
+                <th>Book title </th> <th>price</th> <th >qty</th> <th>cost</th> 
+            `;
+            tBody.appendChild(tHead);
+            //console.log(myOrder.collections);
+            myOrder.collections.forEach(item => {
+                let prize = getPrice(item.bk_sch, Number(item.b_id));
+                let row = document.createElement('tr');
+                row.innerHTML = `<td style="text-align:left;">${item.book}</td> 
+                                <td>₦${addCommasToNumber(prize)}</td> 
+                                <td >${item.qnt}</td> 
+                                <td >₦${addCommasToNumber(prize * item.qnt)}</td>
+                                 
+                                `;
+                tBody.appendChild(row);
+
+                cost += prize * item.qnt;
+            });
+            selDate = myOrder.date;
+            cart_table.appendChild(tBody);
+            appBody.appendChild(cart_table);
+            let disCal = cost * (20 / 100);
+            
+            let sum_table = document.createElement('div');
+            sum_table.style.cssText = `font-size:smaller; text-transform:none; background: #f0f0f0; box-shadow: 0px 0px 3px #6d6d6d; margin: 10px auto;`
+            sum_table.innerHTML = `
+                <div class="list"> <span>cost of books:</span> <span><b><small>(after 20%)</small></b> <b>₦${addCommasToNumber(cost - disCal)}</b> <small style="margin-left: 1.5rem;"><span class="bi bi-trash3-fill cancle-btn" name="rqt_btn" id="${myOrder.ref}" style="width: fit-content; font-size: medium; padding: 4px 8px; border-radius: 5px; margin-left: 0.5rem; background: white" ></span></small></span></div>   
+             
+            `; 
+            
+             
+            appBody.innerHTML = ''; //clear content body
+            appBody.innerHTML = `                    
+                <div style="  box-shadow: 0px 0px 3px #6d6d6d;
+                    justify-items: center; align-items: center; 
+                    margin: auto; 
+                    width: 100%; background:#fff;">
+                    <img src="bk_imgs/afem_header.png" style="width: 100%; margin-bottom: -6px; max-width: 400px; " />
+                </div>
+            <small class="list">
+                <span>Requisition for:</span> 
+                <span> <b>${selDate.toUpperCase()}</b></span>
+            </small> 
+                `;
+            let nav = document.createElement('div');
+            nav.classList.add('btm_nav_box');
+            nav.innerHTML = `
+                <div class="list grey-btn nxt-btn bi bi-images" name="rqt_pic" id="${myOrder.ref}" style="width: fit-content; display: block; font-size: 1.5rem" ></div>
+                <div class="list proceed-btn nxt-btn" style="background-color:yellow; width: fit-content;" name="shareBtn" id="${myOrder.ref}"> 
+                    share invoice <div style="font-size: large; font-weight: bolder; margin-left: 1rem; font-size: 1.5rem" class="bi bi-skip-end-btn-fill"></div>
+                </div>
+            `;                                 
+ 
+            appBody.appendChild(cart_table);
+            appBody.appendChild(sum_table); 
+            appBody.appendChild(nav);
+            
+
+            //appBody.appendChild(tFoot);
+            
+            const checkboxes = document.querySelectorAll('.invoiceCheck');
+
+            // Add a change event listener to each checkbox
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    checkbox.parentNode.style.backgroundColor = checkbox.checked ? 'aqua' : '';
+                });
+            });
+    }
+    else{
+        appBody.innerHTML = '';
+        appBody.innerHTML = `
+
+        <div class="title_box" style="background-color: #fff;">
+            <div class="bi bi-cart4" style="padding: 5px 1rem; font-size: 2.2rem;"></div>
+            <div class="span" style="margin-left: -3rem; font-size: x-large; font-weight: 300;">order</div>
+        </div>
+        <img src="figures/undraw_refreshing_beverage_td3r.png" width="100%" />
+    
+        <div style="text-transform: none;">an error occured while fetching that order</div>
+            
+            <div class="list cancle-btn nxt-btn" style="margin: 1rem auto; width: 50%;" onclick="window.location.assign('index.html')">
+                    transactions <div class="bi bi-cart-check-fill"></div>
+            </div> 
+    </div>
+    `; 
+    }
+
+    const priceTag = document.getElementById('togglePrice');
+         
+    if (priceTag && priceLabel) {
+        priceTag.addEventListener('change', () => {
+            const isCustom = priceTag.checked;
+            isCustom ? checkStat = 'checked' : checkStat = 'official pricelist';
+
+            isCustom ? priceLabel = 'custom pricelist' : priceLabel = 'official pricelist';
+            priceList = isCustom ? customPrice : officialPrice;
+            
+            setTimeout(() => {
+                displayInvoice(ref);
+            }, 500);
+            
+        });
+    }    
 }
 
 const completeRequestVerification = async(ref_c) =>{
@@ -4036,24 +4331,183 @@ const completeRequestVerification = async(ref_c) =>{
 
     let pyday;    
     requisitionObject.status = 'verified';
-    let dayte = new Date($('#payDay').val());; 
-
-    let day = dayte.getDate();
-    let month = dayte.getMonth() + 1;
-    let year = dayte.getFullYear();
-
-    pyday = writeMonth(month)+' '+ day +', '+ year;
-
-    requisitionObject.payday = pyday;
-    requisitionObject.rate = $('#discount').val().trim();;
-    requisitionObject.receiver = $('#receiver').val().trim();
-    requisitionObject.contact = $('#receiver_phone').val().trim();
-
+ 
     console.log(requisitionObject);
 
     await window.updateRequest(ref_c, JSON.stringify(requisitionObject), 'verified');
-    //load invoice for sharing
-    displayInvoice(ref_c);
+  
 }
 
+
+
+
+
+/********************************   waybill codes   *************************************** */
+const getWayBill =()=>{
+
+}
+
+const loadWayBill =()=>{
+
+}
+
+
+
+
+
+/********************************   waybill codes   *************************************** */
+
+const schoolList = async () =>{
+
+    if(oldPop){
+        oldPop.style.display = 'none'; oldPop.innerHtml = '';
+    }
+    const myInvoices = await getAllSchool(); 
+     
+      try{
+        if(myInvoices.length  !== 0){
+            let invoice_table = document.createElement('table');
+            invoice_table.style.cssText = `box-shadow: 0px 0px 3px #6d6d6d;`;
+            let tBody = document.createElement('tbody');
+            let tHead = document.createElement('tr');
+            tHead.innerHTML = `
+                <tr><th>S/N</th>   <th>school</th> <th>address</th>  </tr>  
+            `;
+            tBody.appendChild(tHead);
+
+            let school = '', sch_address = '', contact_phone = '', contact_person = '';
+            let sn = 1;
+            myInvoices.forEach(key => {
+               
+                if (typeof key === 'object' && key !== null){
+                    
+                    sch_address = key.school_address;
+                    school = key.school_name;
+                    contact_phone = key.contact_phone;
+                    contact_person = key.contact_name;
+
+                    let fwd, bck = '';
+
+                    let row = document.createElement('tr');
+                    row.onclick =()=>{ customer_profile(`${key.school_ref}`) }
+                    
+                    row.innerHTML = `<td style="text-align: center">${sn}</td> <td style="font-weight: bold;">${school}</td> <td style="text-align: left;">${sch_address}</td> `;
+ 
+                    tBody.appendChild(row);
+                    sn++;
+                }
+                
+            });
+            invoice_table.appendChild(tBody);
+            
+              appBody.innerHTML = `
+                <h1 style="font-weight: 300; margin: 1rem auto; text-align: center;">School List</h1>
+           
+            `;
+            appBody.appendChild(invoice_table);
+             
+        }
+        else{
+            
+            appBody.innerHTML = '';
+            if(oldPop){
+                oldPop.style.display = 'none'; oldPop.innerHtml = '';
+            }
+            appBody.innerHTML = `
+                <div style="margin: 10px auto; text-align: center;">
+                    <h1 style="font-weight: 300;">Invoice Book</h1>
+                    <img src="figures/undraw_Personal_notebook_re_d7dc.png" width="100%" />
+                    
+                    <div style="width: 80%; margin: 1rem auto; text-align: center; text-transform: none; font-size: smaller;">
+                        your invoice book is empty, write a new invoice to get started.</div>
+            
+                    <div class="grey-btn nxt-btn list" style="width:60%; padding: 1rem"   onclick="add_invoice()"> write new invoice <i class="bi bi-highlighter" style="font-size: 1.5rem;"></i></div> 
+            
+                </div>
+            `;   
+        }        
+      }
+      catch(err){
+        console.error('Error reading data:', err.message || err);
+      }
+
+}
+
+
+
+
+
 //npx webpack
+
+
+// const container = document.getElementById('content_body');
+// const overflowHeight = window.innerHeight * 0.8; // 80% of the viewport height
+
+// // Function to calculate the height of an element
+// const getElementHeight = (el) => el.getBoundingClientRect().height;
+
+// // Get the elements within the container
+// const header = container.querySelector('#table_head');
+// const table = container.querySelector('#table');
+// const footer = container.querySelector('#footer');
+
+// // Function to move overflow content
+// const moveOverflowContent = () => {
+//     let rows = Array.from(table.querySelectorAll('tbody tr'));
+//     let rowHeights = rows.map(getElementHeight); // Cache row heights
+//     let totalHeight = getElementHeight(header) + getElementHeight(table.querySelector('thead'));
+
+//     // Find the index at which to split the rows using binary search
+//     let splitIndex = rows.length;
+//     let low = 0, high = rows.length - 1;
+//     while (low <= high) {
+//         let mid = Math.floor((low + high) / 2);
+//         let midHeight = totalHeight;
+//         for (let i = 0; i <= mid; i++) {
+//             midHeight += rowHeights[i];
+//         }
+//         if (midHeight <= overflowHeight) {
+//             splitIndex = mid + 1;
+//             low = mid + 1;
+//         } else {
+//             high = mid - 1;
+//         }
+//     }
+
+//     // If there's an overflow, move rows and footer
+//     if (splitIndex < rows.length) {
+//         // Create a new container dynamically
+//         const newContainer = document.createElement('div');
+//         newContainer.classList.add('content-container');
+//         newContainer.innerHTML = `
+//             <div class="header">${header.innerHTML}</div>
+//             <table>
+//                 <thead>${table.querySelector('thead').outerHTML}</thead>
+//                 <tbody></tbody>
+//             </table>
+//             <div class="footer">${footer.innerHTML}</div>
+//         `;
+//         document.body.appendChild(newContainer);
+
+//         // Move overflowing rows and footer to the new container
+//         const newTableBody = newContainer.querySelector('tbody');
+//         rows.slice(splitIndex).forEach(row => newTableBody.appendChild(row));
+
+//         // Apply styles to the new container
+//         const containerStyles = window.getComputedStyle(container);
+//         newContainer.style.padding = containerStyles.padding;
+//         newContainer.style.backgroundColor = containerStyles.backgroundColor;
+//         // ... apply other styles as needed
+
+//         // Announce the change to screen readers
+//         const liveRegion = document.createElement('div');
+//         liveRegion.setAttribute('aria-live', 'polite');
+//         liveRegion.textContent = 'Content has been split into multiple containers due to overflow.';
+//         document.body.appendChild(liveRegion);
+//     }
+// };
+
+// // Check if there is overflow and move content
+// if (container.scrollHeight > container.clientHeight) {
+//     moveOverflowContent();
+// }
