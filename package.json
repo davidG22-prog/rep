@@ -16,9 +16,9 @@
     "@capacitor-community/admob": "^6.0.0",
     "@capacitor-community/privacy-screen": "^5.1.1",
     "@capacitor-community/sqlite": "^6.0.1",
-    "@capacitor/android": "^6.1.1",
+    "@capacitor/android": "^6.1.2",
     "@capacitor/camera": "latest",
-    "@capacitor/core": "latest",
+    "@capacitor/core": "^6.1.2",
     "@capacitor/device": "^6.0.0",
     "@capacitor/dialog": "^6.0.0",
     "@capacitor/filesystem": "^6.0.0",
@@ -36,7 +36,7 @@
     "pdfmake": "^0.2.12"
   },
   "devDependencies": {
-    "@capacitor/cli": "latest",
+    "@capacitor/cli": "^6.1.2",
     "vite": "^2.9.13",
     "webpack-cli": "^5.1.4"
   },

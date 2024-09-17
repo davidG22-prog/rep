@@ -424,7 +424,7 @@ window.deleteInvoice = deleteInvoice;
 
 
 
-/*******************  requisition code       *************** */
+/*******************  requisition code  *************** */
 
 // get request list 
 const getRequestList = async () => {
@@ -661,6 +661,35 @@ const verifyBook = async (ref) => {
       //show requisition
       displayRequest(ref);  
     }  
+};
+
+const delitemfrmRequest = async (indexToRemove) => {
+  const { value } = await Dialog.confirm({
+    title: 'Remove book',
+    message: `Are you sure you want to remove this book?`,
+    okButtonTitle: 'remove',
+  });
+
+    if(value == 1){
+           // If the book is found in the array
+            if (indexToRemove !== -1) {
+            // Remove the book from the array and store the removed book object
+            cartItemsAry.splice(indexToRemove, 1);
+                //code to save to device db
+                //update invoice collections
+                requisitionObject.collections = cartItemsAry;
+
+                await updateRequest(in_ref, JSON.stringify(requisitionObject), 'draft');
+                
+                await alert_Toast('book removed from requisition');
+            //reload cart
+            editRequest(in_ref);
+            } else {
+            // Log a message indicating the book was not found in the cart
+            console.log(`Book not found in invoice: ${bookToRemove.title}`);
+            } 
+    }
+ 
 };
 
 
@@ -1386,6 +1415,18 @@ document.addEventListener('click', function(event) {
       } 
     });
 
+  }
+
+  if (event.target && event.target.matches('[name="rmRq"]')) {
+    const req_tag = event.target.id;
+    let req_id = req_tag.split('|')[2];
+    console.log(req_tag);  
+    if (req_id) {
+      // Call your function with the element's id
+      delitemfrmRequest(req_id);
+    } else {
+        console.warn('The clicked element does not have an id.');
+    }
   }
 
   if (event.target && event.target.matches('[name="rqt_btn"]')) {
